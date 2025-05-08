@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>바연화연 - 환수혼 계산</title>
+    <meta name="description" content="바람의나라: 연 환수정보, 환수 결속, 환수혼 계산기 등 게임 관련 도구 모음">
+    <link rel="icon" type="image/png" href="assets/img/BHY.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/img/BHY.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/img/BHY.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/img/BHY.png">
+
+    <link href="assets/css/soulCalculator.css" rel="stylesheet">
+    <link href="assets/css/global.css" rel="stylesheet">
+    <link href="assets/css/components/ads.css" rel="stylesheet">
+    <link href="assets/css/components/footer.css" rel="stylesheet">
+    <link href="assets/css/components/header.css" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js?v=1746712568"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js?v=1746712568"></script>
+</head>
+
+<body>
+    <header class="header">
+        <div class="logo-container">
+            <a href="info.html">
+                <img src="assets/img/BHY.png" alt="바연화연 로고" class="logo">
+            </a>
+        </div>
+        <nav class="tabs">
+            <div class="tab" onclick="location.assign('info.html')">환수정보</div>
+            <div class="tab" onclick="location.assign('bondCalculator.html')">환수 결속</div>
+            <div class="tab active" onclick="location.assign('soulCalculator.html')">환수혼 계산</div>
+            <div class="tab" onclick="location.assign('chak.html')">착 계산</div>
+        </nav>
+    </header>
+
+    <div class="ad-row">
+        <div class="ad-container-left">
+            <ins class="kakao_ad_area" style="display:none;" data-ad-unit="DAN-XTAnZwWzQOT46c36" data-ad-width="728"
+                data-ad-height="90"></ins>
+        </div>
+
+        <div class="ad-container-right">
+            <ins class="kakao_ad_area" style="display:none;" data-ad-unit="DAN-l6ShIzRdMfSOcB8v" data-ad-width="728"
+                data-ad-height="90"></ins>
+        </div>
+    </div>
+
+    <div class="ad-container mobile-ad">
+        <ins class="kakao_ad_area" style="display:none;" data-ad-unit="DAN-UDsuae5QVIAxX2fS" data-ad-width="320"
+            data-ad-height="50"></ins>
+    </div>
+
+    <div class="container">
+        <div class="left">
+            <h3>환수 성장 경험치 테이블</h3>
+            <div class="exp-type-tabs">
+                <div class="exp-tab active" data-type="legend">전설</div>
+                <div class="exp-tab" data-type="immortal">불멸</div>
+            </div>
+
+            <div class="tables-container">
+                <div class="table-half">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Lv</th>
+                                <th>경험치</th>
+                            </tr>
+                        </thead>
+                        <tbody id="expTableLeft"></tbody>
+                    </table>
+                </div>
+                <div class="table-half">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Lv</th>
+                                <th>경험치</th>
+                            </tr>
+                        </thead>
+                        <tbody id="expTableRight"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="right">
+            <h2>환수혼 계산기</h2>
+
+            <div class="calculator-form">
+                <div class="input-row">
+                    <div class="input-group type-select">
+                        <label>종류:</label>
+                        <select id="expType">
+                            <option value="legend">전설</option>
+                            <option value="immortal">불멸</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label>현재:</label>
+                        <input type="number" id="currentLevel" min="0" max="24" value="0">
+                    </div>
+
+                    <div class="input-group">
+                        <label>목표:</label>
+                        <input type="number" id="targetLevel" min="1" max="25" value="1">
+                    </div>
+                </div>
+
+                <div class="soul-panel">
+                    <div class="soul-item">
+                        <img src="assets/img/high-soul.jpg" alt="최상급">
+                        <label>최상급 (1000)</label>
+                        <input type="number" id="highSoul" min="0" value="0">
+                    </div>
+                    <div class="soul-item">
+                        <img src="assets/img/mid-soul.jpg" alt="상급">
+                        <label>상급 (100)</label>
+                        <input type="number" id="midSoul" min="0" value="0">
+                    </div>
+                    <div class="soul-item">
+                        <img src="assets/img/low-soul.jpg" alt="하급">
+                        <label>하급 (10)</label>
+                        <input type="number" id="lowSoul" min="0" value="0">
+                    </div>
+                </div>
+                <div class="calc-btn">
+                    <button id="calculateBtn">계산</button>
+                </div>
+            </div>
+
+            <div class="results-panel hidden" id="resultsPanel">
+                <div class="result-column">
+                    <div id="required" class="result-box"></div>
+                </div>
+                <div class="result-column">
+                    <div id="maxLevel" class="result-box"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="ad-row">
+        <div class="ad-container-left">
+            <ins class="kakao_ad_area" style="display:none;" data-ad-unit="DAN-3TYDe2ScVF7pn7fU" data-ad-width="728"
+                data-ad-height="90"></ins>
+        </div>
+
+        <div class="ad-container-right">
+            <ins class="kakao_ad_area" style="display:none;" data-ad-unit="DAN-Sxen5zACA7yhBeet" data-ad-width="728"
+                data-ad-height="90"></ins>
+        </div>
+    </div>
+
+    <div class="ad-container mobile-ad">
+        <ins class="kakao_ad_area" style="display:none;" data-ad-unit="DAN-Xtg9TanJcnXcaIaY" data-ad-width="320"
+            data-ad-height="50"></ins>
+    </div>
+
+    <footer class="site-footer">
+        <div class="footer-desktop">
+            <div class="footer-links">
+                <a href="info.html">환수정보</a>
+                <a href="bondCalculator.html">환수 결속</a>
+                <a href="soulCalculator.html">환수혼 계산</a>
+                <a href="chak.html">착 계산</a>
+                <button class="footer-report-btn" onclick="openReportSheet()">제보하기</button>
+            </div>
+        </div>
+        <div class="footer-copyright">
+            <p>&copy; 2025 바연 화연 | <a href="https://baramy.nexon.com/" target="_blank">바람의나라:연</a>과 공식 관련 없음</p>
+        </div>
+    </footer>
+
+    <script src="assets/js/common.js?v=1746712568"></script>
+    <script src="assets/js/firebaseConfig.js?v=1746712568"></script>
+    <script src="assets/js/soulCalculator.js?v=1746712568"></script>
+    <script src="assets/js/soulCalculatorInit.js?v=1746712568"></script>
+    <script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js?v=1746712568" async></script>
+</body>
+
+</html>

@@ -1,1 +1,388 @@
-const ModalHandler=function(){let e=null,t=[],n=0,l="",a="";function i(i,d,m){e=function(){let e=document.querySelector(".modal-overlay");if(e){const t={overlay:e,container:e.querySelector(".modal")};if(t.container)return t;e.remove(),e=null}e=document.createElement("div"),e.className="modal-overlay";const t=document.createElement("div");t.className="modal";const n=document.createElement("button");return n.className="modal-close",n.innerHTML="✕",n.setAttribute("aria-label","닫기"),n.onclick=u,t.appendChild(n),e.appendChild(t),document.body.appendChild(e),document.addEventListener("keydown",c),e.addEventListener("click",s),{overlay:e,container:t}}();const p=e.container,v=e.overlay;p.innerHTML="";const y=document.createElement("button");y.className="modal-close",y.innerHTML="✕",y.setAttribute("aria-label","닫기"),y.onclick=u,p.appendChild(y);const f=window.DataManager.getData(i);if(!f||!Array.isArray(f))return p.innerHTML+="<p>정보를 표시할 수 없습니다.</p>",v.style.display="flex",void(document.body.style.overflow="hidden");const h=f.find((e=>e&&e.image===d));if(!h)return p.innerHTML+="<p>선택한 환수 정보를 찾을 수 없습니다.</p>",v.style.display="flex",void(document.body.style.overflow="hidden");t=Array.isArray(h.stats)?h.stats:[],n=0,l=h.name||"이름 없음",a=m||h.influence||"";const E=function(e){const i=document.createElement("div");i.className="modal-header";const d=document.createElement("img");d.src=e,d.alt=l,d.className="modal-img-preview";const c=document.createElement("div");c.className="title-area";const s=document.createElement("h3");if(s.textContent=l+" ",a&&window.DataManager.FACTION_ICONS&&window.DataManager.FACTION_ICONS[a]){const e=document.createElement("img");e.src=window.DataManager.FACTION_ICONS[a],e.alt=`${a} 아이콘`,e.title=a,e.className="influence-icon",s.appendChild(e)}else if(a&&"정보없음"!==a){const e=document.createElement("span");e.textContent=`(${a})`,e.style.fontSize="0.8em",e.style.marginLeft="5px",s.appendChild(e)}const u=function(){const e=document.createElement("div");e.classList.add("level-controls");const l=document.createElement("button");l.innerText="-",l.setAttribute("aria-label","레벨 감소"),l.addEventListener("click",(()=>o(-1)));const a=document.createElement("input");a.type="number",a.min="0",a.max="25",a.value=n,a.classList.add("level-input"),a.setAttribute("aria-label","환수 레벨"),a.addEventListener("input",(function(){let e=parseInt(this.value,10);(isNaN(e)||e<0)&&(e=0),e>25&&(e=25),this.value=e,n=e;r(t.find((e=>e&&e.level===n))||null)})),a.addEventListener("keypress",(e=>{/\d/.test(e.key)||e.preventDefault()}));const i=document.createElement("button");i.innerText="+",i.setAttribute("aria-label","레벨 증가"),i.addEventListener("click",(()=>o(1)));const d=document.createElement("button");return d.innerText="MAX",d.classList.add("max-button"),d.setAttribute("aria-label","최대 레벨 설정"),d.addEventListener("click",(()=>{n=25,a.value=n;r(t.find((e=>e&&e.level===n))||null)})),e.appendChild(l),e.appendChild(a),e.appendChild(i),e.appendChild(d),e}();return c.appendChild(s),c.appendChild(u),i.appendChild(d),i.appendChild(c),i}(d),b=function(){const e=document.createElement("div");e.className="stats-container";const t=document.createElement("div");t.className="stats-column";const n=document.createElement("b");n.innerText="📌 등록 효과:";const l=document.createElement("ul");l.id="registrationList",t.appendChild(n),t.appendChild(l);const a=document.createElement("div");a.className="stats-column";const i=document.createElement("b");i.innerText="🧷 결속 효과:";const o=document.createElement("ul");return o.id="bindList",a.appendChild(i),a.appendChild(o),e.appendChild(t),e.appendChild(a),e}();p.appendChild(E),p.appendChild(b);r(t.find((e=>e&&e.level===n))||null),v.style.display="flex",document.body.style.overflow="hidden"}function o(e){const l=n+e;if(l<0||l>25)return;n=l;const a=document.querySelector(".level-input");a&&(a.value=n);r(t.find((e=>e&&e.level===n))||null)}function r(e){const l=document.getElementById("registrationList"),a=document.getElementById("bindList");if(!l||!a)return;l.innerHTML="",a.innerHTML="";const i=l.parentNode,o=a.parentNode;i?.querySelectorAll(".level25-notice").forEach((e=>e.remove())),o?.querySelectorAll(".level25-notice").forEach((e=>e.remove()));const r=t.find((e=>e&&25===e.level)),c=r?.registrationStat&&Object.keys(r.registrationStat).length>0,s=r?.bindStat&&Object.keys(r.bindStat).length>0;if(e?.registrationStat&&Object.keys(e.registrationStat).length>0)d(l,e.registrationStat);else if(25!==n&&c){l.innerHTML=`<li>현재 레벨(${n})에는 등록 효과가 없습니다.</li>`;const e=document.createElement("div");e.className="level25-notice",e.textContent="※ 등록 효과는 25레벨 달성 시 적용됩니다.",i?.appendChild(e)}else l.innerHTML=`<li>레벨 ${n}: 등록 효과 정보 없음</li>`;if(e?.bindStat&&Object.keys(e.bindStat).length>0)d(a,e.bindStat);else if(25!==n&&s){a.innerHTML=`<li>현재 레벨(${n})에는 결속 효과가 없습니다.</li>`;const e=document.createElement("div");e.className="level25-notice",e.textContent="※ 결속 효과는 25레벨 달성 시 적용됩니다.",o?.appendChild(e)}else a.innerHTML=`<li>레벨 ${n}: 결속 효과 정보 없음</li>`}function d(e,t){if(!t||"object"!=typeof t||0===Object.keys(t).length)return void(e.innerHTML="<li>정보 없음</li>");const n={};Object.entries(t).forEach((([e,t])=>{if(null==e||null==t)return;const l=window.DataManager.STATS_MAPPING[e]||e.toString(),a=t.toString();if(n[l]){const e=parseFloat(n[l].val),t=parseFloat(a);isNaN(e)||isNaN(t)||(n[l].val=(e+t).toString())}else n[l]={key:e,val:a,order:window.DataManager.STATS_ORDER.indexOf(e)}}));const l=Object.entries(n).sort((([,e],[,t])=>{const n=e.order,l=t.order;return-1!==n&&-1!==l?n-l:-1!==n?-1:-1!==l?1:e.key.localeCompare(t.key)}));e.innerHTML="",0!==l.length?l.forEach((([t,n])=>{const l=document.createElement("li"),a=n.val,i=window.DataManager.SPECIAL_STAT_CLASSES[t]||"";i?l.innerHTML=`<span class="${i}">${t}: ${a}</span>`:l.textContent=`${t}: ${a}`,e.appendChild(l)})):e.innerHTML="<li>표시할 능력치 없음</li>"}function c(t){"Escape"===t.key&&"flex"===e?.overlay.style.display&&u()}function s(t){t.target===e?.overlay&&"flex"===e?.overlay.style.display&&u()}function u(){e&&e.overlay&&(e.overlay.style.display="none",document.body.style.overflow="auto")}return{showInfo:function(e,t,n){i(e,t,n)},showInfoInModal:i,closeModal:u}}();window.ModalHandler=ModalHandler;
+const ModalHandler = (function () {
+  let modalElement = null;
+  let currentStats = [];
+  let currentLevel = 0;
+  let currentName = "";
+  let currentInfluence = "";
+
+  function showInfo(category, imagePath, influence) {
+    showInfoInModal(category, imagePath, influence);
+  }
+
+  function showInfoInModal(category, imagePath, influence) {
+    modalElement = createModal();
+    const modal = modalElement.container;
+    const modalOverlay = modalElement.overlay;
+
+    modal.innerHTML = "";
+
+    const closeButton = document.createElement("button");
+    closeButton.className = "modal-close";
+    closeButton.innerHTML = "✕";
+    closeButton.setAttribute("aria-label", "닫기");
+    closeButton.onclick = closeModal;
+    modal.appendChild(closeButton);
+
+    const categoryData = window.DataManager.getData(category);
+    if (!categoryData || !Array.isArray(categoryData)) {
+      modal.innerHTML += "<p>정보를 표시할 수 없습니다.</p>";
+      modalOverlay.style.display = "flex";
+      document.body.style.overflow = "hidden";
+      return;
+    }
+
+    const matched = categoryData.find(
+      (item) => item && item.image === imagePath
+    );
+    if (!matched) {
+      modal.innerHTML += "<p>선택한 환수 정보를 찾을 수 없습니다.</p>";
+      modalOverlay.style.display = "flex";
+      document.body.style.overflow = "hidden";
+      return;
+    }
+
+    currentStats = Array.isArray(matched.stats) ? matched.stats : [];
+    currentLevel = 0;
+    currentName = matched.name || "이름 없음";
+    currentInfluence = influence || matched.influence || "";
+
+    const modalHeader = createModalHeader(imagePath);
+    const statsContainer = createStatsContainer();
+
+    modal.appendChild(modalHeader);
+    modal.appendChild(statsContainer);
+
+    const initialStat =
+      currentStats.find((s) => s && s.level === currentLevel) || null;
+    updateStatsInModal(initialStat);
+
+    modalOverlay.style.display = "flex";
+    document.body.style.overflow = "hidden";
+  }
+
+  function createModalHeader(imagePath) {
+    const modalHeader = document.createElement("div");
+    modalHeader.className = "modal-header";
+
+    const imgPreview = document.createElement("img");
+    imgPreview.src = imagePath;
+    imgPreview.alt = currentName;
+    imgPreview.className = "modal-img-preview";
+
+    const titleArea = document.createElement("div");
+    titleArea.className = "title-area";
+    const title = document.createElement("h3");
+    title.textContent = currentName + " ";
+
+    if (
+      currentInfluence &&
+      window.DataManager.FACTION_ICONS &&
+      window.DataManager.FACTION_ICONS[currentInfluence]
+    ) {
+      const influenceIcon = document.createElement("img");
+      influenceIcon.src = window.DataManager.FACTION_ICONS[currentInfluence];
+      influenceIcon.alt = `${currentInfluence} 아이콘`;
+      influenceIcon.title = currentInfluence;
+      influenceIcon.className = "influence-icon";
+      title.appendChild(influenceIcon);
+    } else if (currentInfluence && currentInfluence !== "정보없음") {
+      const influenceText = document.createElement("span");
+      influenceText.textContent = `(${currentInfluence})`;
+      influenceText.style.fontSize = "0.8em";
+      influenceText.style.marginLeft = "5px";
+      title.appendChild(influenceText);
+    }
+
+    const levelControls = createLevelControls();
+    titleArea.appendChild(title);
+    titleArea.appendChild(levelControls);
+    modalHeader.appendChild(imgPreview);
+    modalHeader.appendChild(titleArea);
+
+    return modalHeader;
+  }
+
+  function createLevelControls() {
+    const levelControls = document.createElement("div");
+    levelControls.classList.add("level-controls");
+
+    const levelMinusButton = document.createElement("button");
+    levelMinusButton.innerText = "-";
+    levelMinusButton.setAttribute("aria-label", "레벨 감소");
+    levelMinusButton.addEventListener("click", () => changeLevel(-1));
+
+    const levelInput = document.createElement("input");
+    levelInput.type = "number";
+    levelInput.min = "0";
+    levelInput.max = "25";
+    levelInput.value = currentLevel;
+    levelInput.classList.add("level-input");
+    levelInput.setAttribute("aria-label", "환수 레벨");
+    levelInput.addEventListener("input", function () {
+      let value = parseInt(this.value, 10);
+      if (isNaN(value) || value < 0) value = 0;
+      if (value > 25) value = 25;
+      this.value = value;
+      currentLevel = value;
+      const statForLevel =
+        currentStats.find((s) => s && s.level === currentLevel) || null;
+      updateStatsInModal(statForLevel);
+    });
+    levelInput.addEventListener("keypress", (e) => {
+      if (!/\d/.test(e.key)) e.preventDefault();
+    });
+
+    const levelPlusButton = document.createElement("button");
+    levelPlusButton.innerText = "+";
+    levelPlusButton.setAttribute("aria-label", "레벨 증가");
+    levelPlusButton.addEventListener("click", () => changeLevel(1));
+
+    const maxButton = document.createElement("button");
+    maxButton.innerText = "MAX";
+    maxButton.classList.add("max-button");
+    maxButton.setAttribute("aria-label", "최대 레벨 설정");
+    maxButton.addEventListener("click", () => {
+      currentLevel = 25;
+      levelInput.value = currentLevel;
+      const statForLevel =
+        currentStats.find((s) => s && s.level === currentLevel) || null;
+      updateStatsInModal(statForLevel);
+    });
+
+    levelControls.appendChild(levelMinusButton);
+    levelControls.appendChild(levelInput);
+    levelControls.appendChild(levelPlusButton);
+    levelControls.appendChild(maxButton);
+
+    return levelControls;
+  }
+
+  function createStatsContainer() {
+    const statsContainer = document.createElement("div");
+    statsContainer.className = "stats-container";
+
+    const leftColumn = document.createElement("div");
+    leftColumn.className = "stats-column";
+    const registrationHeader = document.createElement("b");
+    registrationHeader.innerText = "📌 등록 효과:";
+    const registrationList = document.createElement("ul");
+    registrationList.id = "registrationList";
+    leftColumn.appendChild(registrationHeader);
+    leftColumn.appendChild(registrationList);
+
+    const rightColumn = document.createElement("div");
+    rightColumn.className = "stats-column";
+    const bindHeader = document.createElement("b");
+    bindHeader.innerText = "🧷 결속 효과:";
+    const bindList = document.createElement("ul");
+    bindList.id = "bindList";
+    rightColumn.appendChild(bindHeader);
+    rightColumn.appendChild(bindList);
+
+    statsContainer.appendChild(leftColumn);
+    statsContainer.appendChild(rightColumn);
+
+    return statsContainer;
+  }
+
+  function changeLevel(diff) {
+    const newLevel = currentLevel + diff;
+    if (newLevel < 0 || newLevel > 25) return;
+    currentLevel = newLevel;
+    const levelInput = document.querySelector(".level-input");
+    if (levelInput) levelInput.value = currentLevel;
+    const stat = currentStats.find((s) => s && s.level === currentLevel);
+    updateStatsInModal(stat || null);
+  }
+
+  function updateStatsInModal(stat) {
+    const registrationList = document.getElementById("registrationList");
+    const bindList = document.getElementById("bindList");
+    if (!registrationList || !bindList) return;
+
+    registrationList.innerHTML = "";
+    bindList.innerHTML = "";
+
+    const registrationColumn = registrationList.parentNode;
+    const bindColumn = bindList.parentNode;
+    registrationColumn
+      ?.querySelectorAll(".level25-notice")
+      .forEach((n) => n.remove());
+    bindColumn?.querySelectorAll(".level25-notice").forEach((n) => n.remove());
+
+    const level25Stat = currentStats.find((s) => s && s.level === 25);
+    const hasRegEffectAt25 =
+      level25Stat?.registrationStat &&
+      Object.keys(level25Stat.registrationStat).length > 0;
+    const hasBindEffectAt25 =
+      level25Stat?.bindStat && Object.keys(level25Stat.bindStat).length > 0;
+
+    if (
+      stat?.registrationStat &&
+      Object.keys(stat.registrationStat).length > 0
+    ) {
+      displayStatsInOrder(registrationList, stat.registrationStat);
+    } else {
+      if (currentLevel !== 25 && hasRegEffectAt25) {
+        registrationList.innerHTML = `<li>현재 레벨(${currentLevel})에는 등록 효과가 없습니다.</li>`;
+        const notice = document.createElement("div");
+        notice.className = "level25-notice";
+        notice.textContent = "※ 등록 효과는 25레벨 달성 시 적용됩니다.";
+        registrationColumn?.appendChild(notice);
+      } else {
+        registrationList.innerHTML = `<li>레벨 ${currentLevel}: 등록 효과 정보 없음</li>`;
+      }
+    }
+
+    if (stat?.bindStat && Object.keys(stat.bindStat).length > 0) {
+      displayStatsInOrder(bindList, stat.bindStat);
+    } else {
+      if (currentLevel !== 25 && hasBindEffectAt25) {
+        bindList.innerHTML = `<li>현재 레벨(${currentLevel})에는 결속 효과가 없습니다.</li>`;
+        const notice = document.createElement("div");
+        notice.className = "level25-notice";
+        notice.textContent = "※ 결속 효과는 25레벨 달성 시 적용됩니다.";
+        bindColumn?.appendChild(notice);
+      } else {
+        bindList.innerHTML = `<li>레벨 ${currentLevel}: 결속 효과 정보 없음</li>`;
+      }
+    }
+  }
+
+  function displayStatsInOrder(listElement, statsObj) {
+    if (
+      !statsObj ||
+      typeof statsObj !== "object" ||
+      Object.keys(statsObj).length === 0
+    ) {
+      listElement.innerHTML = "<li>정보 없음</li>";
+      return;
+    }
+
+    const groupedStats = {};
+    Object.entries(statsObj).forEach(([key, val]) => {
+      if (
+        key === null ||
+        key === undefined ||
+        val === null ||
+        val === undefined
+      )
+        return;
+
+      const statName = window.DataManager.STATS_MAPPING[key] || key.toString();
+      const valueStr = val.toString();
+
+      if (groupedStats[statName]) {
+        const currentValNum = parseFloat(groupedStats[statName].val);
+        const newValNum = parseFloat(valueStr);
+        if (!isNaN(currentValNum) && !isNaN(newValNum)) {
+          groupedStats[statName].val = (currentValNum + newValNum).toString();
+        }
+      } else {
+        groupedStats[statName] = {
+          key: key,
+          val: valueStr,
+          order: window.DataManager.STATS_ORDER.indexOf(key),
+        };
+      }
+    });
+
+    const sortedStats = Object.entries(groupedStats).sort(([, a], [, b]) => {
+      const orderA = a.order;
+      const orderB = b.order;
+      if (orderA !== -1 && orderB !== -1) return orderA - orderB;
+      if (orderA !== -1) return -1;
+      if (orderB !== -1) return 1;
+      return a.key.localeCompare(b.key);
+    });
+
+    listElement.innerHTML = "";
+    if (sortedStats.length === 0) {
+      listElement.innerHTML = "<li>표시할 능력치 없음</li>";
+      return;
+    }
+
+    sortedStats.forEach(([statName, info]) => {
+      const li = document.createElement("li");
+      const displayValue = info.val;
+      const specialClass =
+        window.DataManager.SPECIAL_STAT_CLASSES[statName] || "";
+      if (specialClass) {
+        li.innerHTML = `<span class="${specialClass}">${statName}: ${displayValue}</span>`;
+      } else {
+        li.textContent = `${statName}: ${displayValue}`;
+      }
+      listElement.appendChild(li);
+    });
+  }
+
+  function createModal() {
+    let modalOverlay = document.querySelector(".modal-overlay");
+    if (modalOverlay) {
+      const modalContainerElement = {
+        overlay: modalOverlay,
+        container: modalOverlay.querySelector(".modal"),
+      };
+      if (!modalContainerElement.container) {
+        modalOverlay.remove();
+        modalOverlay = null;
+      } else {
+        return modalContainerElement;
+      }
+    }
+
+    modalOverlay = document.createElement("div");
+    modalOverlay.className = "modal-overlay";
+
+    const modalContainer = document.createElement("div");
+    modalContainer.className = "modal";
+
+    const closeButton = document.createElement("button");
+    closeButton.className = "modal-close";
+    closeButton.innerHTML = "✕";
+    closeButton.setAttribute("aria-label", "닫기");
+    closeButton.onclick = closeModal;
+
+    modalContainer.appendChild(closeButton);
+    modalOverlay.appendChild(modalContainer);
+    document.body.appendChild(modalOverlay);
+
+    document.addEventListener("keydown", handleEscKey);
+    modalOverlay.addEventListener("click", handleOverlayClick);
+
+    return {
+      overlay: modalOverlay,
+      container: modalContainer,
+    };
+  }
+
+  function handleEscKey(e) {
+    if (e.key === "Escape" && modalElement?.overlay.style.display === "flex") {
+      closeModal();
+    }
+  }
+
+  function handleOverlayClick(e) {
+    if (
+      e.target === modalElement?.overlay &&
+      modalElement?.overlay.style.display === "flex"
+    ) {
+      closeModal();
+    }
+  }
+
+  function closeModal() {
+    if (modalElement && modalElement.overlay) {
+      modalElement.overlay.style.display = "none";
+      document.body.style.overflow = "auto";
+    }
+  }
+
+  return {
+    showInfo,
+    showInfoInModal,
+    closeModal,
+  };
+})();
+
+window.ModalHandler = ModalHandler;

@@ -1,1 +1,1852 @@
-const ChakApp=(()=>{const e=["투구","무기","방패","의상","망토","신발","목걸이","반지","반지","보조","보조"],t=Array.from({length:12},((e,t)=>`+${9+t}`)),s=["피해저항관통","보스몬스터추가피해","치명위력%"],a=["피해저항관통","피해저항","대인방어","대인피해","상태이상저항","상태이상적중","대인방어%","대인피해%"];let n="투구",l="+9",o={},c=!0,r=1e4,i=1e4,d=1e4,u=1e4,p={},m={},v=[],g=[],f=null;const h=document.getElementById("equipment-selector"),y=document.getElementById("level-selector"),b=document.getElementById("stats-display");function E(e){return e.replace(/\d+$/,"")}function $(e){return e.startsWith("반지")?"반지":e}function k(){r=parseInt(document.getElementById("gold-button").value)||0,i=parseInt(document.getElementById("color-ball").value)||0,d=r,u=i,x()}function L(){const e=document.getElementById("gold-button"),t=document.getElementById("color-ball");e&&(e.value=r),t&&(t.value=i)}function x(){const e=document.getElementById("resource-summary");if(!e)return;const t=O(),s=u<0?"resource-negative":"resource-value";let a=`\n          <div class="resource-summary-item">\n              <img src="assets/img/gold-button.jpg" alt="황금단추" class="resource-icon-img">\n              <span class="resource-details">\n                  <span class="${d<0?"resource-negative":"resource-value"}">${d}</span> 보유\n                  / <span class="resource-value">${t.goldButtons}</span> 소모\n              </span>\n          </div>\n          <div class="resource-summary-item">\n              <img src="assets/img/fivecolored-beads.jpg" alt="오색구슬" class="resource-icon-img">\n              <span class="resource-details">\n                  <span class="${s}">${u}</span> 보유\n                  / <span class="resource-value">${t.colorBalls}</span> 소모\n              </span>\n          </div>\n      `;(d<0||u<0)&&(a+='<div class="resource-needed">',d<0&&(a+=`<div class="needed-item">\n                  <img src="assets/img/gold-button.jpg" alt="황금단추" class="resource-icon-img">\n                  <span class="resource-negative">${Math.abs(d)}</span> 추가 필요\n              </div>`),u<0&&(a+=`<div class="needed-item">\n                  <img src="assets/img/fivecolored-beads.jpg" alt="오색구슬" class="resource-icon-img">\n                  <span class="resource-negative">${Math.abs(u)}</span> 추가 필요\n              </div>`),a+="</div>"),e.innerHTML=a}function C(e,t,s){Array.from(e.children).forEach((e=>{"equip-btn"===s?e.classList.remove("bg-sky-500","text-white","font-bold"):"level-btn"===s&&e.classList.remove("bg-emerald-500","text-white","font-bold")})),"equip-btn"===s?t.classList.add("bg-sky-500","text-white","font-bold"):"level-btn"===s&&t.classList.add("bg-emerald-500","text-white","font-bold"),N(),I()}function S(e,t){const s=document.getElementById(t);if(!s)return;const a=new Set;e.forEach((([e,t],o)=>{const c=`${e}_${n}_${l}_${o}`;a.add(c);let r=document.querySelector(`[data-card-id="${c}"]`);r||(r=function(e,t,s,a,o){const c=m[a]||{level:0,value:0,isUnlocked:!1,isFirst:!1,part:n,partLevel:l,statName:e,maxValue:t};let r=c.level,i=c.value,v=c.isUnlocked,g=c.isFirst;const f=E(e),h=document.createElement("div");h.className="stat-card",h.dataset.statName=e,h.dataset.displayStatName=f,h.dataset.part=n,h.dataset.level=l,h.dataset.cardId=a,h.dataset.statIndex=o||0;const y=document.createElement("div");y.className="card-header",y.style.display="flex",y.style.justifyContent="space-between",y.style.alignItems="center";const b=document.createElement("h3");b.className="text-lg font-bold",b.textContent=f;const $=document.createElement("button");$.innerHTML="↻",$.className="redistribute-btn",$.title="능력치 재분배",$.addEventListener("click",(e=>{e.stopPropagation(),function(e,t){const s=parseInt(t.dataset.maxValue||"0"),a=(t.dataset.statName,t.dataset.part),n=t.dataset.level,l=`${a}_${n}`,o="true"===t.dataset.isUnlocked,c="true"===t.dataset.isFirst,r=parseInt(t.dataset.cardLevel||"0");c&&o?(p[l]=!1,r>=1&&(u+=500),r>=2&&(u+=500),r>=3&&(u+=500)):o&&(d+=500,r>=1&&(u+=400),r>=2&&(u+=500),r>=3&&(u+=500));delete m[e],t.dataset.cardLevel="0",t.dataset.value="0",t.dataset.isFirst="false",t.dataset.isUnlocked="false";const i=t.querySelector("p.value-display");i&&(i.textContent=`0 / ${s}`);const v=t.querySelector("p.progress-display");v&&(v.textContent="강화 단계: 0/3");let g=!1;document.querySelectorAll(`#stats-display > div[data-part="${a}"][data-level="${n}"]`).forEach((e=>{"true"===e.dataset.isUnlocked&&"true"===e.dataset.isFirst&&(g=!0)})),p[l]=g,document.querySelectorAll(`#stats-display > div[data-part="${a}"][data-level="${n}"]`).forEach((e=>{if("true"!==e.dataset.isUnlocked){const t=e.querySelector(".action-btn");t&&(t.innerHTML=g?'<img src="assets/img/gold-button.jpg" alt="황금단추" class="btn-icon"> <span>선택 500</span>':'<img src="assets/img/fivecolored-beads.jpg" alt="오색구슬" class="btn-icon"> <span>선택 500</span>')}}));const f=t.querySelector(".action-btn");f&&(f.innerHTML=g?'<img src="assets/img/gold-button.jpg" alt="황금단추" class="btn-icon"> <span>선택 500</span>':'<img src="assets/img/fivecolored-beads.jpg" alt="오색구슬" class="btn-icon"> <span>선택 500</span>',f.disabled=!1,f.classList.remove("disabled-btn"));L(),F(),I(),N(),x(),"block"===document.getElementById("search-results-modal").style.display&&_()}(a,h)})),y.appendChild(b),y.appendChild($);const k=document.createElement("p");k.className="value-display",k.textContent=`${i} / ${t}`;const C=document.createElement("div");C.className="progress-container";const S=document.createElement("div");S.className="progress-dots";for(let e=0;e<3;e++){const t=document.createElement("span");t.className="progress-dot gray",v&&(t.className=e<r?"progress-dot blue":"progress-dot yellow"),S.appendChild(t)}C.appendChild(S);const q=document.createElement("p");q.className="progress-display text-sm text-gray-600",q.textContent=`강화 단계: ${r}/3`,C.appendChild(q);const w=document.createElement("button");w.className="action-btn";const B=p[`${n}_${l}`]||!1;if(v)if(r<3){const e=g?500:0===r?400:500;w.innerHTML=`<img src="assets/img/fivecolored-beads.jpg" alt="오색구슬" class="btn-icon"> <span>강화 ${e}</span>`}else w.innerHTML="<span>완료</span>",w.disabled=!0,w.classList.add("disabled-btn");else w.innerHTML=B?'<img src="assets/img/gold-button.jpg" alt="황금단추" class="btn-icon"> <span>선택 500</span>':'<img src="assets/img/fivecolored-beads.jpg" alt="오색구슬" class="btn-icon"> <span>선택 500</span>';return w.addEventListener("click",(()=>{!function(e,t,s,a,n){let l=parseInt(e.dataset.cardLevel||"0"),o=parseInt(e.dataset.value||"0"),c="true"===e.dataset.isUnlocked,r="true"===e.dataset.isFirst;const i=e.querySelector("p.value-display"),m=e.querySelector("p.progress-display"),v=`${e.dataset.part}_${e.dataset.level}`;if(!c){let g=0;return p[v]?(g=500,r=!1):(g=0,r=!0),r?u-=500:d-=g,c=!0,p[v]?(o=Math.floor(a/15),t.innerHTML='<img src="assets/img/fivecolored-beads.jpg" alt="오색구슬" class="btn-icon"> <span>강화 400</span>',e.dataset.isFirst="false",e.dataset.isUnlocked="true"):(p[v]=!0,t.innerHTML='<img src="assets/img/fivecolored-beads.jpg" alt="오색구슬" class="btn-icon"> <span>강화 500</span>',e.dataset.isFirst="true",e.dataset.isUnlocked="true",Array.from(document.querySelectorAll("#stats-display > div")).forEach((t=>{if(t!==e&&t.dataset.part===e.dataset.part&&t.dataset.level===e.dataset.level&&"true"!==t.dataset.isUnlocked){const e=t.querySelector(".action-btn");e&&(e.innerHTML='<img src="assets/img/gold-button.jpg" alt="황금단추" class="btn-icon"> <span>선택 500</span>')}}))),e.dataset.cardLevel=l,e.dataset.value=o,i&&(i.textContent=`${o} / ${a}`),m&&(m.textContent=`강화 단계: ${l}/3`),D(n,l,o,c,r,e.dataset.part,e.dataset.level,s,a),F(),I(),N(),void x()}if(l<3){let d=0;if(d=r?500:0===l?400:500,u-=d,l++,r)o=Math.floor(a/3*l);else if(1===l){const e=Math.floor(a/15);o=e+(Math.floor(a/3)-e)}else o+=Math.floor(a/3),o>a&&(o=a);if(e.dataset.cardLevel=l,e.dataset.value=o,i&&(i.textContent=`${o} / ${a}`),m&&(m.textContent=`강화 단계: ${l}/3`),l<3){const e=500;t.innerHTML=`<img src="assets/img/fivecolored-beads.jpg" alt="오색구슬" class="btn-icon"> <span>강화 ${e}</span>`}else t.innerHTML="<span>완료</span>",t.disabled=!0,t.classList.add("disabled-btn");D(n,l,o,c,r,e.dataset.part,e.dataset.level,s,a),F(),I(),N(),x(),"block"===document.getElementById("search-results-modal").style.display&&_()}}(h,w,e,t,a)})),h.dataset.statName=e,h.dataset.maxValue=t,h.dataset.cardLevel=r,h.dataset.value=i,h.dataset.isFirst=g?"true":"false",h.dataset.isUnlocked=v?"true":"false",h.appendChild(y),h.appendChild(k),h.appendChild(C),h.appendChild(w),s.appendChild(h),h}(e,t,s,c,o)),r.style.display="flex"})),Array.from(s.children).forEach((e=>{a.has(e.dataset.cardId)||(e.style.display="none")})),function(){const e=p[`${n}_${l}`]||!1;Array.from(document.querySelectorAll("#stats-display > div")).filter((e=>"none"!==e.style.display)).forEach((t=>{if("true"!==t.dataset.isUnlocked){const s=t.querySelector(".action-btn");s&&(s.innerHTML=e?'<img src="assets/img/gold-button.jpg" alt="황금단추" class="btn-icon"> <span>선택 500</span>':'<img src="assets/img/fivecolored-beads.jpg" alt="오색구슬" class="btn-icon"> <span>선택 500</span>')}else{const e=t.querySelector(".action-btn");if(e){const s=parseInt(t.dataset.cardLevel||"0");if(s<3){const a="true"===t.dataset.isFirst?500:0===s?400:500;e.innerHTML=`<img src="assets/img/fivecolored-beads.jpg" alt="오색구슬" class="btn-icon"> <span>강화 ${a}</span>`}else e.innerHTML="<span>완료</span>",e.disabled=!0,e.classList.add("disabled-btn")}}}))}(),I(),N()}function I(){document.querySelectorAll(".stat-card").forEach((e=>{const t="true"===e.dataset.isUnlocked,s=parseInt(e.dataset.cardLevel||"0"),a=e.querySelectorAll(".progress-dot");a.length>0&&a.forEach(((e,a)=>{e.className="progress-dot gray",t&&(e.className=a<s?"progress-dot blue":"progress-dot yellow")}))}))}function N(){n&&e.forEach((e=>{e===n&&t.forEach((t=>{const s=function(e,t){const s=[],a=$(e),n=`lv${t.replace("+","")}`;o[a]&&o[a][n]&&Object.entries(o[a][n]).forEach((([a,n],l)=>{const o=`${a}_${e}_${t}_${l}`,c=E(a),r=m[o]||{level:0,value:0,isUnlocked:!1,isFirst:!1,part:e,partLevel:t,statName:a,maxValue:n};s.push({name:c,originalName:a,maxValue:n,state:r,index:l})}));return s}(e,t);if(0===s.length)return;y.querySelectorAll(".level-btn").forEach((e=>{if(e.querySelector(".level-text").textContent===t){const t=e.querySelector(".progress-dots");if(t){t.innerHTML="";const e=Math.min(4,s.length);for(let a=0;a<e;a++){const e=document.createElement("span"),n=s[a].state;n.isUnlocked?3===n.level?e.className="progress-dot blue":e.className="progress-dot yellow":e.className="progress-dot gray",t.appendChild(e)}}!function(e,t){const s=e.querySelector(".level-progress-bar"),a=e.querySelector(".level-status");if(!s||!a)return;let n=0,l=3*t.length,o=0;t.forEach((e=>{e.state.isUnlocked&&(n+=e.state.level,o++)}));const c=l>0?Math.round(n/l*100):0;s.style.width=`${c}%`,0===c?(s.classList.remove("partial","complete"),s.classList.add("empty")):c<100?(s.classList.remove("empty","complete"),s.classList.add("partial")):(s.classList.remove("empty","partial"),s.classList.add("complete"));a.textContent=o>0?`${o}/${t.length} (${c}%)`:""}(e,s)}}))}))}))}function q(){if(!n||!l)return;const e=$(n),t=`lv${l.replace("+","")}`,s=o[e];if(!s||!s[t])return void document.querySelectorAll("#stats-display > div").forEach((e=>{e.style.display="none"}));S(Object.entries(s[t]),"stats-display"),c?c=!1:F(),N(),x()}function w(){const e=new Set;for(const t in o)for(const s in o[t])for(const a in o[t][s]){const t=E(a);e.add(t)}return Array.from(e).sort()}function B(){const e=document.getElementById("stat-options");e&&(e.innerHTML="",v.forEach((t=>{const s=document.createElement("div");s.className="stat-option",s.textContent=t,s.addEventListener("click",(function(e){e.stopPropagation(),function(e){const t=g.indexOf(e);-1===t?g.push(e):g.splice(t,1);j(),M(!1)}(t)})),e.appendChild(s)})))}function j(){const e=document.getElementById("selected-stats");e&&(e.innerHTML="",g.forEach((t=>{const s=document.createElement("div");s.className="stat-chip",s.innerHTML=`${t} <span class="remove-stat" onclick="ChakApp.removeSelectedStat('${t}')">×</span>`,e.appendChild(s)})))}function M(e){const t=document.getElementById("stat-options");t&&(t.style.display=e?"block":"none",e&&(t.scrollTop=0))}function A(){const e=document.getElementById("search-input"),t=e.value.trim().toLowerCase();if(t||0!==g.length){if(t){const s=v.filter((e=>e.toLowerCase().includes(t)));if(0===s.length)return void alert("일치하는 능력치가 없습니다.");s.forEach((e=>{g.includes(e)||g.push(e)})),j(),e.value=""}_(),M(!1)}else alert("검색어를 입력하거나 능력치를 선택해주세요.")}function _(){if(0===g.length)return void alert("검색할 능력치를 선택해주세요.");let s=[];const a={};g.forEach((n=>{a[n]=0;for(const l of e){const e=$(l);if(o[e])for(const c of t){const t=`lv${c.replace("+","")}`;if(!o[e][t])continue;const r=Object.entries(o[e][t]);for(const[e,t]of r){const o=E(e);if(o===n){const r=`${e}_${l}_${c}_0`,i=m[r]?.isUnlocked||!1,d=m[r]?.level||0;a[n]+=t,s.push({part:l,level:c,statName:o,maxValue:t,cardId:r,isUnlocked:i,currentLevel:d})}}}}}));const n=U(s);H("검색 결과",s,a,"search",n)}function T(s,a){let n=[];const l={};a.forEach((s=>{l[s]=0;for(const a of e){const e=$(a);if(o[e])for(const c of t){const t=`lv${c.replace("+","")}`;if(!o[e][t])continue;const r=Object.entries(o[e][t]);for(const[e,t]of r){const o=E(e);if(o===s){const r=`${e}_${a}_${c}_0`,i=m[r]?.isUnlocked||!1,d=m[r]?.level||0;l[s]+=t,n.push({part:a,level:c,statName:o,maxValue:t,cardId:r,isUnlocked:i,currentLevel:d})}}}}}));const c=function(e){return U(e)}(n),r=`\n          <div class="preset-summary">\n              <div class="preset-header">\n                  <h4>${s} 조합 추천 능력치</h4>\n                  <div class="preset-stats">\n                      ${a.map((e=>`<span class="priority-stat">${e} <strong>최대 +${l[e]}</strong></span>`)).join("")}\n                  </div>\n              </div>\n              <div class="preset-resources">\n                  <div class="resource-req-title">모든 능력치 최대 강화 시 필요 자원:</div>\n                  <div class="resource-req-items">\n                      <div class="resource-req-item">\n                          <img src="assets/img/gold-button.jpg" alt="황금단추" class="resource-icon-img-small">\n                          <span>${c.goldButtons}</span>\n                      </div>\n                      <div class="resource-req-item">\n                          <img src="assets/img/fivecolored-beads.jpg" alt="오색구슬" class="resource-icon-img-small">\n                          <span>${c.colorBalls}</span>\n                      </div>\n                  </div>\n              </div>\n          </div>\n      `;H(`${s} 능력치 조합`,n,l,"보스용"===s?"boss":"pvp",c,r)}function H(t,s,a,n,l=null,o=null){const c="search"===n?"search-results-modal":"optimize-results-modal",r=document.getElementById(c),i="search"===n?null:document.getElementById("optimize-title"),d="search"===n?null:document.getElementById("optimize-description"),u=document.getElementById("search"===n?"search-results":"optimize-results");if(!r||!u)return;i&&(i.textContent=t);let p="";if("boss"===n?p='\n              <div class="ad-row">\n                  <div class="ad-container-left">\n                      <ins class="kakao_ad_area" style="display:none;" data-ad-unit="DAN-UkkhjQ9GYeZ3sOXB"\n                          data-ad-width="728" data-ad-height="90"></ins>\n                  </div>\n              </div>\n              <div class="ad-container mobile-ad">\n                  <ins class="kakao_ad_area" style="display:none;" data-ad-unit="DAN-BhKdcNxF7CCOuMnG"\n                      data-ad-width="320" data-ad-height="50"></ins>\n              </div>\n          ':"pvp"===n?p='\n              <div class="ad-row">\n                  <div class="ad-container-left">\n                      <ins class="kakao_ad_area" style="display:none;" data-ad-unit="DAN-LtG5sjZScAmdPYfF"\n                          data-ad-width="728" data-ad-height="90"></ins>\n                  </div>\n              </div>\n              <div class="ad-container mobile-ad">\n                  <ins class="kakao_ad_area" style="display:none;" data-ad-unit="DAN-R6nzUmJFWnh04OdE"\n                      data-ad-width="320" data-ad-height="50"></ins>\n              </div>\n          ':"search"===n&&(p='\n              <div class="ad-row">\n                  <div class="ad-container-left">\n                      <ins class="kakao_ad_area" style="display:none;" data-ad-unit="DAN-dPt3jx9Ie5yTkVJy"\n                          data-ad-width="728" data-ad-height="90"></ins>\n                  </div>\n              </div>\n              <div class="ad-container mobile-ad">\n                  <ins class="kakao_ad_area" style="display:none;" data-ad-unit="DAN-Zbrtp5BDtY7qDIcS"\n                      data-ad-width="320" data-ad-height="50"></ins>\n              </div>\n          '),0===s.length)return u.innerHTML=p+'<div class="no-results">검색 결과가 없습니다.</div>',void(r.style.display="block");if(d&&o&&(d.innerHTML=o),"search"===n&&l){const e=document.getElementById("search-summary-stats"),t=document.getElementById("search-resource-requirement"),n=document.getElementById("searched-stats-list");if(e&&t&&n){e.innerHTML="",t.innerHTML="",n.innerHTML="";let o="";Object.entries(a).forEach((([e,t])=>{o+=`<span class="summary-stat-badge">${e} <strong>최대 +${t}</strong></span>`})),e.innerHTML=o,t.innerHTML=`\n                  <div class="resource-req-item">\n                      <img src="assets/img/gold-button.jpg" alt="황금단추" class="resource-icon-img-small">\n                      <span>${l.goldButtons}</span>\n                  </div>\n                  <div class="resource-req-item">\n                      <img src="assets/img/fivecolored-beads.jpg" alt="오색구슬" class="resource-icon-img-small">\n                      <span>${l.colorBalls}</span>\n                  </div>\n              `;let c="";Object.entries(a).forEach((([e,t])=>{s.filter((t=>t.statName===e)).length>0&&(c+=`\n                          <div class="searched-stat-item" onclick="ChakApp.highlightStatInResults('${e}')">\n                              <span class="searched-stat-name">${e}</span>\n                              <span class="searched-stat-value">+${t}</span>\n                          </div>`)})),n.innerHTML=c}}const m={};s.forEach((e=>{m[e.statName]||(m[e.statName]=[]),m[e.statName].push(e)})),u.innerHTML="";let v=p;v+='<div class="compact-results">';let g=0;for(const[t,s]of Object.entries(m)){g++;const l=`${n}-stat-group-${g}`,o=1===g;v+=`<div class="compact-group" data-stat="${t}">\n              <div class="compact-stat-title" data-target="${l}">\n                  <div class="stat-name-section">\n                      <span class="toggle-icon">${o?"▼":"►"}</span>\n                      ${t}\n                      <span class="stat-count">(${s.length}곳)</span>\n                  </div>\n                  <div class="stat-info">\n                      <span class="stat-total-value">최대 +${a[t]}</span>\n                  </div>\n              </div>\n              <div id="${l}" class="stat-group-content" ${o?"":'style="display:none;"'}>`;const c=Object.groupBy(s,(e=>e.part)),r=Object.keys(c).sort(((t,s)=>e.indexOf(t)-e.indexOf(s)));for(const e of r){const t=c[e];t.sort(((e,t)=>parseInt(e.level.replace("+",""))-parseInt(t.level.replace("+",""))));const s=t.reduce(((e,t)=>e+t.maxValue),0);v+=`<div class="part-section">\n                  <div class="part-header">\n                      <span>${e}</span>\n                      <span class="part-value">+${s} (${t.length}개)</span>\n                  </div>\n                  <div class="compact-locations">`,t.forEach((e=>{let t="location-unused";e.isUnlocked&&(t=3===e.currentLevel?"location-complete":"location-partial");const s="search"===n?`ChakApp.selectStatFromSearch('${e.part}', '${e.level}')`:`ChakApp.selectStatFromPreset('${e.part}', '${e.level}')`;v+=`\n                      <div class="compact-location ${t}" onclick="${s}">\n                          <div class="loc-header">\n                              <span class="loc-level">lv ${e.level}</span>\n                          </div>\n                          <div class="loc-details">\n                              <span class="loc-max-value">+${e.maxValue}</span>\n                          </div>\n                      </div>`})),v+="</div></div>"}v+="</div></div>"}v+="</div>",u.innerHTML=v;if(u.querySelectorAll(".compact-stat-title").forEach((e=>{e.addEventListener("click",(function(){const e=this.getAttribute("data-target"),t=document.getElementById(e),s=this.querySelector(".toggle-icon");"none"===t.style.display?(t.style.display="block",s.textContent="▼",t.style.maxHeight="0",setTimeout((()=>{t.style.maxHeight=t.scrollHeight+"px"}),10)):(s.textContent="►",t.style.maxHeight="0",setTimeout((()=>{t.style.display="none"}),300))}))})),"search"!==n){const e=document.querySelector(".apply-btn");e&&(e.textContent="창 닫기",e.onclick=z)}if(window.innerWidth<=768?(r.querySelectorAll(".mobile-ad .kakao_ad_area").forEach((e=>{e.style.display="block"})),r.querySelectorAll(".ad-container-left .kakao_ad_area").forEach((e=>{e.style.display="none"}))):(r.querySelectorAll(".ad-container-left .kakao_ad_area").forEach((e=>{e.style.display="block"})),r.querySelectorAll(".mobile-ad .kakao_ad_area").forEach((e=>{e.style.display="none"}))),window.adfit)window.adfit();else{const e=document.createElement("script");e.src="//t1.daumcdn.net/kas/static/ba.min.js",e.async=!0,document.body.appendChild(e)}r.style.display="block"}function U(e){const t={};let s=0,a=0;return e.forEach((e=>{const s=`${e.part}_${e.level}`;t[s]||(t[s]=[]),t[s].push(e)})),Object.values(t).forEach((e=>{let t=!1;e.forEach((e=>{e.isUnlocked&&(t=!0)})),!t&&e.length>0?(a+=500,e.length>1&&(s+=500*(e.length-1),a+=1400*(e.length-1))):e.forEach((e=>{const t=function(e){const t=e.isUnlocked?0:500;let s=0;e.isUnlocked?(e.currentLevel<1&&(s+=500),e.currentLevel<2&&(s+=500),e.currentLevel<3&&(s+=500)):s=500;return{goldButtons:t,colorBalls:s}}(e);s+=t.goldButtons,a+=t.colorBalls}))})),{goldButtons:s,colorBalls:a}}function O(){let e=0,t=0;const s={};return Object.entries(m).forEach((([e,t])=>{if(!t.isUnlocked)return;const a=`${t.part}_${t.partLevel}`;s[a]||(s[a]=[]),s[a].push(t)})),Object.entries(s).forEach((([s,a])=>{a.find((e=>e.isFirst));a.forEach((s=>{s.isFirst?(s.level>=1&&(t+=500),s.level>=2&&(t+=500),s.level>=3&&(t+=500)):(e+=500,s.level>=1&&(t+=400),s.level>=2&&(t+=500),s.level>=3&&(t+=500))}))})),{goldButtons:e,colorBalls:t}}function F(){const e={};let t=0;Object.entries(m).forEach((([s,a])=>{if(a.value>0){const s=E(a.statName);e[s]||(e[s]=0),e[s]+=a.value,t+=a.level}}));O();!function(e,t){const s=document.getElementById("summary-display");if(!s)return;let a="";const n=Object.entries(t).sort(((e,t)=>t[1]-e[1]));if(n.length>0){a+='<div class="stat-list">';for(const[e,t]of n)t>0&&(a+=`\n                      <div class="stat-item">\n                          <span class="stat-name">${e}</span> \n                          <span class="stat-value">+${t}</span>\n                      </div>`);a+="</div>"}else a="<p>능력치가 개방되지 않았습니다.</p>";s.innerHTML=`\n          <div class="summary-section">\n              ${a}\n          </div>\n      `}(0,e)}function D(e,t,s,a,n,l,o,c,r){m[e]={level:t,value:s,isUnlocked:a,isFirst:n,part:l,partLevel:o,statName:c,maxValue:r}}function V(){const s=document.getElementById("gold-button"),a=document.getElementById("color-ball");s&&(s.addEventListener("change",k),s.addEventListener("input",k),r=parseInt(s.value)||1e4,d=r),a&&(a.addEventListener("change",k),a.addEventListener("input",k),i=parseInt(a.value)||1e4,u=i);const o=document.getElementById("search-input");o&&(o.addEventListener("click",(function(e){e.stopPropagation(),M(!0)})),o.addEventListener("focus",(function(){M(!0)})),o.addEventListener("input",(function(){!function(e){const t=document.getElementById("stat-options"),s=t.querySelectorAll(".stat-option");e=e.toLowerCase();let a=0;s.forEach((t=>{const s=t.textContent.toLowerCase().includes(e);t.style.display=s?"flex":"none",s&&a++}));const n=t.querySelector(".no-matches");if(0===a){if(!n){const e=document.createElement("div");e.className="no-matches",e.textContent="일치하는 항목 없음",t.appendChild(e)}}else n&&n.remove();M(!0)}(this.value)})),o.addEventListener("keydown",(function(e){"Enter"===e.key&&(e.preventDefault(),A())}))),document.addEventListener("click",(function(e){const t=document.getElementById("stat-options"),s=document.getElementById("search-input");t&&s&&(s.contains(e.target)||t.contains(e.target)||M(!1))})),L(),x(),e.forEach((e=>{const t=document.createElement("button");t.className="selector-btn equip-btn",t.textContent=e,t.addEventListener("click",(()=>{n=e,C(h,t,"equip-btn"),q()})),h.appendChild(t),"투구"===e&&t.classList.add("bg-sky-500","text-white","font-bold")})),t.forEach((e=>{const t=document.createElement("button");t.className="selector-btn level-btn";const s=document.createElement("div");s.className="level-text",s.textContent=e,t.appendChild(s);const a=document.createElement("div");a.className="level-progress-container";const n=document.createElement("div");n.className="level-status",n.textContent="";const o=document.createElement("div");o.className="level-progress-bar empty",o.style.width="0%",a.appendChild(n),a.appendChild(o),t.appendChild(a);const c=document.createElement("div");c.className="progress-dots";for(let e=0;e<4;e++){const e=document.createElement("span");e.className="progress-dot gray",c.appendChild(e)}t.appendChild(c),t.addEventListener("click",(()=>{l=e,C(y,t,"level-btn"),q()})),y.appendChild(t),"+9"===e&&t.classList.add("bg-emerald-500","text-white","font-bold")}))}function P(){const e=document.getElementById("search-results-modal");e&&(e.style.display="none")}function z(){const e=document.getElementById("optimize-results-modal");e&&(e.style.display="none"),f=null}function R(e,t){const s=document.querySelectorAll(".equip-btn");let a=null;for(const t of s)if(t.textContent===e){a=t;break}a&&(n=e,C(h,a,"equip-btn"));const o=document.querySelectorAll(".level-btn");let c=null;for(const e of o){const s=e.querySelector(".level-text");if(s&&s.textContent===t){c=e;break}}c&&(l=t,C(y,c,"level-btn")),q(),P()}return{initUI:V,loadChakData:async function(){try{const e=await async function(e,t,s=24){const a=localStorage.getItem(e),n=localStorage.getItem(`${e}_time`),l=(new Date).getTime(),o=60*s*60*1e3;if(a&&n&&l-parseInt(n)<o)return JSON.parse(a);const c=await t();return localStorage.setItem(e,JSON.stringify(c)),localStorage.setItem(`${e}_time`,l.toString()),c}("chakData",(async()=>await async function(e){try{const t=window.CommonData.DOCUMENT_MAP[e];if(!t)throw new Error(`No mapping for ${e}`);const s=await db.collection("jsonData").doc(t).get();if(!s.exists)throw new Error(`Document ${t} not found`);const a=s.data();if(!a)throw new Error(`Document ${t} exists but has no data`);return a}catch(t){const s=await fetch(`output/${e}`);return await s.json()}}("chak.json")),24);o=e,v=w(),V(),B(),q(),x()}catch(e){console.error("Failed to load chak data:",e),b&&(b.innerHTML=`<p class="text-red-500">${e.message||"데이터를 불러오는 데 실패했습니다."}</p>`);try{const e=await fetch("output/chak.json"),t=await e.json();o=t,v=w(),V(),B(),q(),x()}catch(e){console.error("Local fallback also failed:",e),b&&(b.innerHTML='<p class="text-red-500">데이터를 불러오는 데 실패했습니다.</p>')}}},searchStats:A,removeSelectedStat:function(e){const t=g.indexOf(e);-1!==t&&g.splice(t,1),j()},highlightStatInResults:function(e){document.querySelectorAll(".compact-group").forEach((t=>{if(t.getAttribute("data-stat")===e){const e=t.querySelector(".compact-stat-title").getAttribute("data-target"),s=document.getElementById(e),a=t.querySelector(".toggle-icon");"none"===s.style.display&&(s.style.display="block",a.textContent="▼",s.style.maxHeight=s.scrollHeight+"px"),t.scrollIntoView({behavior:"smooth",block:"start"}),t.classList.add("highlight-group"),setTimeout((()=>{t.classList.remove("highlight-group")}),1500)}}))},selectStatFromSearch:R,selectStatFromPreset:function(e,t){R(e,t),z()},closeSearchResults:P,closeOptimizeResults:z,optimizeStats:function(e){let t=[],n="";if("boss"===e)t=s,n="보스용";else{if("pvp"!==e)return void alert("유효하지 않은 프리셋입니다.");t=a,n="PvP용"}T(n,t)}}})();firebase.initializeApp(firebaseConfig);const db=firebase.firestore();ChakApp.loadChakData();
+const ChakApp = (() => {
+  const PARTS = [
+    "투구",
+    "무기",
+    "방패",
+    "의상",
+    "망토",
+    "신발",
+    "목걸이",
+    "반지",
+    "반지",
+    "보조",
+    "보조",
+  ];
+
+  const LEVELS = Array.from({ length: 12 }, (_, i) => `+${9 + i}`);
+
+  const BOSS_STATS = ["피해저항관통", "보스몬스터추가피해", "치명위력%"];
+  const PVP_STATS = [
+    "피해저항관통",
+    "피해저항",
+    "대인방어",
+    "대인피해",
+    "상태이상저항",
+    "상태이상적중",
+    "대인방어%",
+    "대인피해%",
+  ];
+
+  let selectedPart = "투구";
+  let selectedLevel = "+9";
+  let equipmentData = {};
+  let isInitialLoad = true;
+
+  let userInputGoldButtons = 10000;
+  let userInputColorBalls = 10000;
+  let userGoldButtons = 10000;
+  let userColorBalls = 10000;
+
+  let firstUnlockedMap = {};
+  let globalStatState = {};
+  let allAvailableStats = [];
+  let selectedStats = [];
+  let optimizationPlan = null;
+
+  const equipmentContainer = document.getElementById("equipment-selector");
+  const levelContainer = document.getElementById("level-selector");
+  const statsContainer = document.getElementById("stats-display");
+
+  function getDisplayStatName(statName) {
+    return statName.replace(/\d+$/, "");
+  }
+
+  function getBasePartName(part) {
+    return part.startsWith("반지") ? "반지" : part;
+  }
+
+  async function getCachedData(key, fetchFunction, expiryHours = 24) {
+    const cachedData = localStorage.getItem(key);
+    const cachedTime = localStorage.getItem(`${key}_time`);
+
+    const now = new Date().getTime();
+    const expiryTime = expiryHours * 60 * 60 * 1000;
+
+    if (cachedData && cachedTime && now - parseInt(cachedTime) < expiryTime) {
+      return JSON.parse(cachedData);
+    }
+
+    const freshData = await fetchFunction();
+
+    localStorage.setItem(key, JSON.stringify(freshData));
+    localStorage.setItem(`${key}_time`, now.toString());
+
+    return freshData;
+  }
+
+  async function getFirestoreDocument(fileName) {
+    try {
+      const documentMap = window.CommonData.DOCUMENT_MAP;
+      // console.log("documentMap = ", documentMap);
+
+      const docId = documentMap[fileName];
+
+      if (!docId) {
+        throw new Error(`No mapping for ${fileName}`);
+      }
+
+      const docRef = await db.collection("jsonData").doc(docId).get();
+
+      if (!docRef.exists) {
+        throw new Error(`Document ${docId} not found`);
+      }
+
+      const data = docRef.data();
+
+      if (!data) {
+        throw new Error(`Document ${docId} exists but has no data`);
+      }
+
+      return data;
+    } catch (error) {
+      // console.error(`Firestore error for ${fileName}:`, error);
+      const response = await fetch(`output/${fileName}`);
+      return await response.json();
+    }
+  }
+
+  function updateUserResources() {
+    userInputGoldButtons =
+      parseInt(document.getElementById("gold-button").value) || 0;
+    userInputColorBalls =
+      parseInt(document.getElementById("color-ball").value) || 0;
+
+    userGoldButtons = userInputGoldButtons;
+    userColorBalls = userInputColorBalls;
+
+    updateResourceSummary();
+  }
+
+  function updateResourceDisplay() {
+    const goldButtonDisplay = document.getElementById("gold-button");
+    const colorBallDisplay = document.getElementById("color-ball");
+
+    if (goldButtonDisplay) goldButtonDisplay.value = userInputGoldButtons;
+    if (colorBallDisplay) colorBallDisplay.value = userInputColorBalls;
+  }
+
+  function updateResourceSummary() {
+    const resourceSummary = document.getElementById("resource-summary");
+    if (!resourceSummary) return;
+
+    const resources = calculateResources();
+
+    const goldButtonClass =
+      userGoldButtons < 0 ? "resource-negative" : "resource-value";
+    const colorBallClass =
+      userColorBalls < 0 ? "resource-negative" : "resource-value";
+
+    let html = `
+          <div class="resource-summary-item">
+              <img src="assets/img/gold-button.jpg" alt="황금단추" class="resource-icon-img">
+              <span class="resource-details">
+                  <span class="${goldButtonClass}">${userGoldButtons}</span> 보유
+                  / <span class="resource-value">${resources.goldButtons}</span> 소모
+              </span>
+          </div>
+          <div class="resource-summary-item">
+              <img src="assets/img/fivecolored-beads.jpg" alt="오색구슬" class="resource-icon-img">
+              <span class="resource-details">
+                  <span class="${colorBallClass}">${userColorBalls}</span> 보유
+                  / <span class="resource-value">${resources.colorBalls}</span> 소모
+              </span>
+          </div>
+      `;
+
+    if (userGoldButtons < 0 || userColorBalls < 0) {
+      html += `<div class="resource-needed">`;
+
+      if (userGoldButtons < 0) {
+        html += `<div class="needed-item">
+                  <img src="assets/img/gold-button.jpg" alt="황금단추" class="resource-icon-img">
+                  <span class="resource-negative">${Math.abs(
+                    userGoldButtons
+                  )}</span> 추가 필요
+              </div>`;
+      }
+
+      if (userColorBalls < 0) {
+        html += `<div class="needed-item">
+                  <img src="assets/img/fivecolored-beads.jpg" alt="오색구슬" class="resource-icon-img">
+                  <span class="resource-negative">${Math.abs(
+                    userColorBalls
+                  )}</span> 추가 필요
+              </div>`;
+      }
+
+      html += `</div>`;
+    }
+
+    resourceSummary.innerHTML = html;
+  }
+
+  function highlightSelection(container, selectedBtn, typeClass) {
+    Array.from(container.children).forEach((btn) => {
+      if (typeClass === "equip-btn") {
+        btn.classList.remove("bg-sky-500", "text-white", "font-bold");
+      } else if (typeClass === "level-btn") {
+        btn.classList.remove("bg-emerald-500", "text-white", "font-bold");
+      }
+    });
+
+    if (typeClass === "equip-btn") {
+      selectedBtn.classList.add("bg-sky-500", "text-white", "font-bold");
+    } else if (typeClass === "level-btn") {
+      selectedBtn.classList.add("bg-emerald-500", "text-white", "font-bold");
+    }
+
+    updateLevelButtonIndicators();
+    updateStatCardStatus();
+  }
+
+  function renderStatCards(stats, containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    const displayedCards = new Set();
+
+    stats.forEach(([statName, maxValue], index) => {
+      const cardId = `${statName}_${selectedPart}_${selectedLevel}_${index}`;
+      displayedCards.add(cardId);
+
+      let card = document.querySelector(`[data-card-id="${cardId}"]`);
+
+      if (!card) {
+        card = createStatCard(statName, maxValue, container, cardId, index);
+      }
+
+      card.style.display = "flex";
+    });
+
+    Array.from(container.children).forEach((card) => {
+      if (!displayedCards.has(card.dataset.cardId)) {
+        card.style.display = "none";
+      }
+    });
+
+    updateButtonStates();
+    updateStatCardStatus();
+    updateLevelButtonIndicators();
+  }
+
+  function updateButtonStates() {
+    const partLevelKey = `${selectedPart}_${selectedLevel}`;
+    const hasFirstUnlocked = firstUnlockedMap[partLevelKey] || false;
+
+    const visibleCards = Array.from(
+      document.querySelectorAll("#stats-display > div")
+    ).filter((card) => card.style.display !== "none");
+
+    visibleCards.forEach((card) => {
+      if (card.dataset.isUnlocked !== "true") {
+        const button = card.querySelector(".action-btn");
+        if (button) {
+          if (hasFirstUnlocked) {
+            button.innerHTML = `<img src="assets/img/gold-button.jpg" alt="황금단추" class="btn-icon"> <span>선택 500</span>`;
+          } else {
+            button.innerHTML = `<img src="assets/img/fivecolored-beads.jpg" alt="오색구슬" class="btn-icon"> <span>선택 500</span>`;
+          }
+        }
+      } else {
+        const button = card.querySelector(".action-btn");
+        if (button) {
+          const level = parseInt(card.dataset.cardLevel || "0");
+          if (level < 3) {
+            const orbCost =
+              card.dataset.isFirst === "true" ? 500 : level === 0 ? 400 : 500;
+            button.innerHTML = `<img src="assets/img/fivecolored-beads.jpg" alt="오색구슬" class="btn-icon"> <span>강화 ${orbCost}</span>`;
+          } else {
+            button.innerHTML = `<span>완료</span>`;
+            button.disabled = true;
+            button.classList.add("disabled-btn");
+          }
+        }
+      }
+    });
+  }
+
+  function updateStatCardStatus() {
+    document.querySelectorAll(".stat-card").forEach((card) => {
+      const isUnlocked = card.dataset.isUnlocked === "true";
+      const level = parseInt(card.dataset.cardLevel || "0");
+      const progressDots = card.querySelectorAll(".progress-dot");
+
+      if (progressDots.length > 0) {
+        progressDots.forEach((dot, index) => {
+          dot.className = "progress-dot gray";
+
+          if (isUnlocked) {
+            if (index < level) {
+              dot.className = "progress-dot blue";
+            } else {
+              dot.className = "progress-dot yellow";
+            }
+          }
+        });
+      }
+    });
+  }
+
+  function getStatsForPartAndLevel(part, level) {
+    const result = [];
+    const basePart = getBasePartName(part);
+    const key = `lv${level.replace("+", "")}`;
+
+    if (equipmentData[basePart] && equipmentData[basePart][key]) {
+      const stats = Object.entries(equipmentData[basePart][key]);
+
+      stats.forEach(([statName, maxValue], index) => {
+        const cardId = `${statName}_${part}_${level}_${index}`;
+        const displayName = getDisplayStatName(statName);
+
+        const statState = globalStatState[cardId] || {
+          level: 0,
+          value: 0,
+          isUnlocked: false,
+          isFirst: false,
+          part: part,
+          partLevel: level,
+          statName: statName,
+          maxValue: maxValue,
+        };
+
+        result.push({
+          name: displayName,
+          originalName: statName,
+          maxValue: maxValue,
+          state: statState,
+          index: index,
+        });
+      });
+    }
+
+    return result;
+  }
+
+  function updateLevelButtonIndicators() {
+    if (!selectedPart) return;
+
+    PARTS.forEach((part) => {
+      if (part === selectedPart) {
+        LEVELS.forEach((level) => {
+          const stats = getStatsForPartAndLevel(part, level);
+
+          if (stats.length === 0) return;
+
+          const levelButtons = levelContainer.querySelectorAll(".level-btn");
+          levelButtons.forEach((btn) => {
+            const levelText = btn.querySelector(".level-text").textContent;
+
+            if (levelText === level) {
+              const dotsContainer = btn.querySelector(".progress-dots");
+              if (dotsContainer) {
+                dotsContainer.innerHTML = "";
+
+                const maxDots = Math.min(4, stats.length);
+
+                for (let i = 0; i < maxDots; i++) {
+                  const dot = document.createElement("span");
+                  const statState = stats[i].state;
+
+                  if (statState.isUnlocked) {
+                    if (statState.level === 3) {
+                      dot.className = "progress-dot blue";
+                    } else {
+                      dot.className = "progress-dot yellow";
+                    }
+                  } else {
+                    dot.className = "progress-dot gray";
+                  }
+
+                  dotsContainer.appendChild(dot);
+                }
+              }
+
+              updateLevelProgressBar(btn, stats);
+            }
+          });
+        });
+      }
+    });
+  }
+
+  function updateLevelProgressBar(btn, stats) {
+    const progressBar = btn.querySelector(".level-progress-bar");
+    const statusText = btn.querySelector(".level-status");
+
+    if (!progressBar || !statusText) return;
+
+    let totalPoints = 0;
+    let totalMaxPoints = stats.length * 3;
+    let unlockedCount = 0;
+
+    stats.forEach((stat) => {
+      if (stat.state.isUnlocked) {
+        totalPoints += stat.state.level;
+        unlockedCount++;
+      }
+    });
+
+    const percent =
+      totalMaxPoints > 0 ? Math.round((totalPoints / totalMaxPoints) * 100) : 0;
+    progressBar.style.width = `${percent}%`;
+
+    if (percent === 0) {
+      progressBar.classList.remove("partial", "complete");
+      progressBar.classList.add("empty");
+    } else if (percent < 100) {
+      progressBar.classList.remove("empty", "complete");
+      progressBar.classList.add("partial");
+    } else {
+      progressBar.classList.remove("empty", "partial");
+      progressBar.classList.add("complete");
+    }
+
+    if (unlockedCount > 0) {
+      statusText.textContent = `${unlockedCount}/${stats.length} (${percent}%)`;
+    } else {
+      statusText.textContent = "";
+    }
+  }
+
+  function renderStats() {
+    if (!selectedPart || !selectedLevel) return;
+
+    const basePart = getBasePartName(selectedPart);
+    const key = `lv${selectedLevel.replace("+", "")}`;
+    const partStats = equipmentData[basePart];
+
+    if (!partStats || !partStats[key]) {
+      document.querySelectorAll("#stats-display > div").forEach((card) => {
+        card.style.display = "none";
+      });
+      return;
+    }
+
+    const stats = Object.entries(partStats[key]);
+    renderStatCards(stats, "stats-display");
+
+    if (isInitialLoad) {
+      isInitialLoad = false;
+    } else {
+      updateTotalStats();
+    }
+
+    updateLevelButtonIndicators();
+    updateResourceSummary();
+  }
+
+  function collectAllStatNames() {
+    const stats = new Set();
+
+    for (const partName in equipmentData) {
+      for (const levelKey in equipmentData[partName]) {
+        for (const statName in equipmentData[partName][levelKey]) {
+          const displayName = getDisplayStatName(statName);
+          stats.add(displayName);
+        }
+      }
+    }
+
+    return Array.from(stats).sort();
+  }
+
+  function populateStatOptions() {
+    const optionsContainer = document.getElementById("stat-options");
+    if (!optionsContainer) return;
+
+    optionsContainer.innerHTML = "";
+
+    allAvailableStats.forEach((stat) => {
+      const option = document.createElement("div");
+      option.className = "stat-option";
+      option.textContent = stat;
+      option.addEventListener("click", function (e) {
+        e.stopPropagation();
+        toggleStatSelection(stat);
+      });
+      optionsContainer.appendChild(option);
+    });
+  }
+
+  function toggleStatSelection(stat) {
+    const index = selectedStats.indexOf(stat);
+
+    if (index === -1) {
+      selectedStats.push(stat);
+    } else {
+      selectedStats.splice(index, 1);
+    }
+
+    updateSelectedStatsDisplay();
+    toggleStatOptions(false);
+  }
+
+  function updateSelectedStatsDisplay() {
+    const container = document.getElementById("selected-stats");
+    if (!container) return;
+
+    container.innerHTML = "";
+
+    selectedStats.forEach((stat) => {
+      const chip = document.createElement("div");
+      chip.className = "stat-chip";
+      chip.innerHTML = `${stat} <span class="remove-stat" onclick="ChakApp.removeSelectedStat('${stat}')">×</span>`;
+      container.appendChild(chip);
+    });
+  }
+
+  function removeSelectedStat(stat) {
+    const index = selectedStats.indexOf(stat);
+    if (index !== -1) {
+      selectedStats.splice(index, 1);
+    }
+    updateSelectedStatsDisplay();
+  }
+
+  function filterStatOptions(filterText) {
+    const statOptions = document.getElementById("stat-options");
+    const options = statOptions.querySelectorAll(".stat-option");
+
+    filterText = filterText.toLowerCase();
+    let visibleCount = 0;
+
+    options.forEach((option) => {
+      const text = option.textContent.toLowerCase();
+      const isVisible = text.includes(filterText);
+
+      option.style.display = isVisible ? "flex" : "none";
+      if (isVisible) visibleCount++;
+    });
+
+    const noMatches = statOptions.querySelector(".no-matches");
+    if (visibleCount === 0) {
+      if (!noMatches) {
+        const noMatchesElement = document.createElement("div");
+        noMatchesElement.className = "no-matches";
+        noMatchesElement.textContent = "일치하는 항목 없음";
+        statOptions.appendChild(noMatchesElement);
+      }
+    } else {
+      if (noMatches) noMatches.remove();
+    }
+
+    toggleStatOptions(true);
+  }
+
+  function toggleStatOptions(show) {
+    const statOptions = document.getElementById("stat-options");
+    if (statOptions) {
+      statOptions.style.display = show ? "block" : "none";
+
+      if (show) {
+        statOptions.scrollTop = 0;
+      }
+    }
+  }
+
+  function searchStats() {
+    const input = document.getElementById("search-input");
+    const searchText = input.value.trim().toLowerCase();
+
+    if (!searchText && selectedStats.length === 0) {
+      alert("검색어를 입력하거나 능력치를 선택해주세요.");
+      return;
+    }
+
+    if (searchText) {
+      const matchingStats = allAvailableStats.filter((stat) =>
+        stat.toLowerCase().includes(searchText)
+      );
+
+      if (matchingStats.length === 0) {
+        alert("일치하는 능력치가 없습니다.");
+        return;
+      }
+
+      matchingStats.forEach((stat) => {
+        if (!selectedStats.includes(stat)) {
+          selectedStats.push(stat);
+        }
+      });
+
+      updateSelectedStatsDisplay();
+      input.value = "";
+    }
+
+    showSearchResults();
+    toggleStatOptions(false);
+  }
+
+  function showSearchResults() {
+    if (selectedStats.length === 0) {
+      alert("검색할 능력치를 선택해주세요.");
+      return;
+    }
+
+    let results = [];
+    const statMaxValues = {};
+
+    selectedStats.forEach((searchStat) => {
+      statMaxValues[searchStat] = 0;
+
+      for (const part of PARTS) {
+        const basePart = getBasePartName(part);
+        if (!equipmentData[basePart]) continue;
+
+        for (const level of LEVELS) {
+          const key = `lv${level.replace("+", "")}`;
+          if (!equipmentData[basePart][key]) continue;
+
+          const stats = Object.entries(equipmentData[basePart][key]);
+          for (const [statName, maxValue] of stats) {
+            const displayName = getDisplayStatName(statName);
+            if (displayName === searchStat) {
+              const cardId = `${statName}_${part}_${level}_0`;
+              const isUnlocked = globalStatState[cardId]?.isUnlocked || false;
+              const currentLevel = globalStatState[cardId]?.level || 0;
+
+              statMaxValues[searchStat] += maxValue;
+
+              results.push({
+                part: part,
+                level: level,
+                statName: displayName,
+                maxValue: maxValue,
+                cardId: cardId,
+                isUnlocked: isUnlocked,
+                currentLevel: currentLevel,
+              });
+            }
+          }
+        }
+      }
+    });
+
+    const totalResources = calculateTotalResourcesForSearch(results);
+    showModalResults(
+      "검색 결과",
+      results,
+      statMaxValues,
+      "search",
+      totalResources
+    );
+  }
+
+  function showPresetSearchResults(presetName, targetStats) {
+    let results = [];
+    const statMaxValues = {};
+
+    targetStats.forEach((searchStat) => {
+      statMaxValues[searchStat] = 0;
+
+      for (const part of PARTS) {
+        const basePart = getBasePartName(part);
+        if (!equipmentData[basePart]) continue;
+
+        for (const level of LEVELS) {
+          const key = `lv${level.replace("+", "")}`;
+          if (!equipmentData[basePart][key]) continue;
+
+          const stats = Object.entries(equipmentData[basePart][key]);
+          for (const [statName, maxValue] of stats) {
+            const displayName = getDisplayStatName(statName);
+            if (displayName === searchStat) {
+              const cardId = `${statName}_${part}_${level}_0`;
+              const isUnlocked = globalStatState[cardId]?.isUnlocked || false;
+              const currentLevel = globalStatState[cardId]?.level || 0;
+
+              statMaxValues[searchStat] += maxValue;
+
+              results.push({
+                part: part,
+                level: level,
+                statName: displayName,
+                maxValue: maxValue,
+                cardId: cardId,
+                isUnlocked: isUnlocked,
+                currentLevel: currentLevel,
+              });
+            }
+          }
+        }
+      }
+    });
+
+    const totalResources = calculateTotalResourcesForPreset(results);
+
+    const description = `
+          <div class="preset-summary">
+              <div class="preset-header">
+                  <h4>${presetName} 조합 추천 능력치</h4>
+                  <div class="preset-stats">
+                      ${targetStats
+                        .map(
+                          (stat) =>
+                            `<span class="priority-stat">${stat} <strong>최대 +${statMaxValues[stat]}</strong></span>`
+                        )
+                        .join("")}
+                  </div>
+              </div>
+              <div class="preset-resources">
+                  <div class="resource-req-title">모든 능력치 최대 강화 시 필요 자원:</div>
+                  <div class="resource-req-items">
+                      <div class="resource-req-item">
+                          <img src="assets/img/gold-button.jpg" alt="황금단추" class="resource-icon-img-small">
+                          <span>${totalResources.goldButtons}</span>
+                      </div>
+                      <div class="resource-req-item">
+                          <img src="assets/img/fivecolored-beads.jpg" alt="오색구슬" class="resource-icon-img-small">
+                          <span>${totalResources.colorBalls}</span>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      `;
+
+    const adType = presetName === "보스용" ? "boss" : "pvp";
+    showModalResults(
+      `${presetName} 능력치 조합`,
+      results,
+      statMaxValues,
+      adType,
+      totalResources,
+      description
+    );
+  }
+
+  function showModalResults(
+    title,
+    results,
+    statMaxValues,
+    adType,
+    totalResources = null,
+    description = null
+  ) {
+    const modalId =
+      adType === "search" ? "search-results-modal" : "optimize-results-modal";
+    const modal = document.getElementById(modalId);
+    const titleElement =
+      adType === "search" ? null : document.getElementById("optimize-title");
+    const descriptionElement =
+      adType === "search"
+        ? null
+        : document.getElementById("optimize-description");
+    const resultsContainer = document.getElementById(
+      adType === "search" ? "search-results" : "optimize-results"
+    );
+
+    if (!modal || !resultsContainer) return;
+
+    if (titleElement) {
+      titleElement.textContent = title;
+    }
+
+    let adHTML = "";
+    if (adType === "boss") {
+      adHTML = `
+              <div class="ad-row">
+                  <div class="ad-container-left">
+                      <ins class="kakao_ad_area" style="display:none;" data-ad-unit="DAN-UkkhjQ9GYeZ3sOXB"
+                          data-ad-width="728" data-ad-height="90"></ins>
+                  </div>
+              </div>
+              <div class="ad-container mobile-ad">
+                  <ins class="kakao_ad_area" style="display:none;" data-ad-unit="DAN-BhKdcNxF7CCOuMnG"
+                      data-ad-width="320" data-ad-height="50"></ins>
+              </div>
+          `;
+    } else if (adType === "pvp") {
+      adHTML = `
+              <div class="ad-row">
+                  <div class="ad-container-left">
+                      <ins class="kakao_ad_area" style="display:none;" data-ad-unit="DAN-LtG5sjZScAmdPYfF"
+                          data-ad-width="728" data-ad-height="90"></ins>
+                  </div>
+              </div>
+              <div class="ad-container mobile-ad">
+                  <ins class="kakao_ad_area" style="display:none;" data-ad-unit="DAN-R6nzUmJFWnh04OdE"
+                      data-ad-width="320" data-ad-height="50"></ins>
+              </div>
+          `;
+    } else if (adType === "search") {
+      adHTML = `
+              <div class="ad-row">
+                  <div class="ad-container-left">
+                      <ins class="kakao_ad_area" style="display:none;" data-ad-unit="DAN-dPt3jx9Ie5yTkVJy"
+                          data-ad-width="728" data-ad-height="90"></ins>
+                  </div>
+              </div>
+              <div class="ad-container mobile-ad">
+                  <ins class="kakao_ad_area" style="display:none;" data-ad-unit="DAN-Zbrtp5BDtY7qDIcS"
+                      data-ad-width="320" data-ad-height="50"></ins>
+              </div>
+          `;
+    }
+
+    if (results.length === 0) {
+      resultsContainer.innerHTML =
+        adHTML + `<div class="no-results">검색 결과가 없습니다.</div>`;
+      modal.style.display = "block";
+      return;
+    }
+
+    if (descriptionElement && description) {
+      descriptionElement.innerHTML = description;
+    }
+
+    if (adType === "search" && totalResources) {
+      const summaryStatsContainer = document.getElementById(
+        "search-summary-stats"
+      );
+      const resourceRequirementContainer = document.getElementById(
+        "search-resource-requirement"
+      );
+      const searchedStatsContainer = document.getElementById(
+        "searched-stats-list"
+      );
+
+      if (
+        summaryStatsContainer &&
+        resourceRequirementContainer &&
+        searchedStatsContainer
+      ) {
+        summaryStatsContainer.innerHTML = "";
+        resourceRequirementContainer.innerHTML = "";
+        searchedStatsContainer.innerHTML = "";
+
+        let summaryStatsHtml = "";
+        Object.entries(statMaxValues).forEach(([stat, value]) => {
+          summaryStatsHtml += `<span class="summary-stat-badge">${stat} <strong>최대 +${value}</strong></span>`;
+        });
+        summaryStatsContainer.innerHTML = summaryStatsHtml;
+
+        resourceRequirementContainer.innerHTML = `
+                  <div class="resource-req-item">
+                      <img src="assets/img/gold-button.jpg" alt="황금단추" class="resource-icon-img-small">
+                      <span>${totalResources.goldButtons}</span>
+                  </div>
+                  <div class="resource-req-item">
+                      <img src="assets/img/fivecolored-beads.jpg" alt="오색구슬" class="resource-icon-img-small">
+                      <span>${totalResources.colorBalls}</span>
+                  </div>
+              `;
+
+        let searchedStatsHtml = "";
+        Object.entries(statMaxValues).forEach(([stat, value]) => {
+          const statResults = results.filter(
+            (result) => result.statName === stat
+          );
+          if (statResults.length > 0) {
+            searchedStatsHtml += `
+                          <div class="searched-stat-item" onclick="ChakApp.highlightStatInResults('${stat}')">
+                              <span class="searched-stat-name">${stat}</span>
+                              <span class="searched-stat-value">+${value}</span>
+                          </div>`;
+          }
+        });
+        searchedStatsContainer.innerHTML = searchedStatsHtml;
+      }
+    }
+
+    const groupedByStats = {};
+    results.forEach((result) => {
+      if (!groupedByStats[result.statName]) {
+        groupedByStats[result.statName] = [];
+      }
+      groupedByStats[result.statName].push(result);
+    });
+
+    resultsContainer.innerHTML = "";
+
+    let html = adHTML;
+    html += `<div class="compact-results">`;
+
+    let groupIndex = 0;
+    for (const [statName, statResults] of Object.entries(groupedByStats)) {
+      groupIndex++;
+      const groupId = `${adType}-stat-group-${groupIndex}`;
+      const isExpanded = groupIndex === 1;
+
+      html += `<div class="compact-group" data-stat="${statName}">
+              <div class="compact-stat-title" data-target="${groupId}">
+                  <div class="stat-name-section">
+                      <span class="toggle-icon">${isExpanded ? "▼" : "►"}</span>
+                      ${statName}
+                      <span class="stat-count">(${statResults.length}곳)</span>
+                  </div>
+                  <div class="stat-info">
+                      <span class="stat-total-value">최대 +${
+                        statMaxValues[statName]
+                      }</span>
+                  </div>
+              </div>
+              <div id="${groupId}" class="stat-group-content" ${
+        isExpanded ? "" : 'style="display:none;"'
+      }>`;
+
+      const groupedByParts = Object.groupBy(statResults, (item) => item.part);
+      const sortedParts = Object.keys(groupedByParts).sort(
+        (a, b) => PARTS.indexOf(a) - PARTS.indexOf(b)
+      );
+
+      for (const part of sortedParts) {
+        const partItems = groupedByParts[part];
+        partItems.sort(
+          (a, b) =>
+            parseInt(a.level.replace("+", "")) -
+            parseInt(b.level.replace("+", ""))
+        );
+        const partTotalValue = partItems.reduce(
+          (sum, item) => sum + item.maxValue,
+          0
+        );
+
+        html += `<div class="part-section">
+                  <div class="part-header">
+                      <span>${part}</span>
+                      <span class="part-value">+${partTotalValue} (${partItems.length}개)</span>
+                  </div>
+                  <div class="compact-locations">`;
+
+        partItems.forEach((loc) => {
+          let statusClass = "location-unused";
+          if (loc.isUnlocked) {
+            statusClass =
+              loc.currentLevel === 3 ? "location-complete" : "location-partial";
+          }
+
+          const onClickFunc =
+            adType === "search"
+              ? `ChakApp.selectStatFromSearch('${loc.part}', '${loc.level}')`
+              : `ChakApp.selectStatFromPreset('${loc.part}', '${loc.level}')`;
+
+          html += `
+                      <div class="compact-location ${statusClass}" onclick="${onClickFunc}">
+                          <div class="loc-header">
+                              <span class="loc-level">lv ${loc.level}</span>
+                          </div>
+                          <div class="loc-details">
+                              <span class="loc-max-value">+${loc.maxValue}</span>
+                          </div>
+                      </div>`;
+        });
+
+        html += `</div></div>`;
+      }
+
+      html += `</div></div>`;
+    }
+
+    html += `</div>`;
+
+    resultsContainer.innerHTML = html;
+
+    const toggleButtons = resultsContainer.querySelectorAll(
+      ".compact-stat-title"
+    );
+    toggleButtons.forEach((button) => {
+      button.addEventListener("click", function () {
+        const targetId = this.getAttribute("data-target");
+        const content = document.getElementById(targetId);
+        const icon = this.querySelector(".toggle-icon");
+
+        if (content.style.display === "none") {
+          content.style.display = "block";
+          icon.textContent = "▼";
+          content.style.maxHeight = "0";
+          setTimeout(() => {
+            content.style.maxHeight = content.scrollHeight + "px";
+          }, 10);
+        } else {
+          icon.textContent = "►";
+          content.style.maxHeight = "0";
+          setTimeout(() => {
+            content.style.display = "none";
+          }, 300);
+        }
+      });
+    });
+
+    if (adType !== "search") {
+      const applyBtn = document.querySelector(".apply-btn");
+      if (applyBtn) {
+        applyBtn.textContent = "창 닫기";
+        applyBtn.onclick = closeOptimizeResults;
+      }
+    }
+
+    const isMobile = window.innerWidth <= 768;
+    if (isMobile) {
+      modal.querySelectorAll(".mobile-ad .kakao_ad_area").forEach((ad) => {
+        ad.style.display = "block";
+      });
+      modal
+        .querySelectorAll(".ad-container-left .kakao_ad_area")
+        .forEach((ad) => {
+          ad.style.display = "none";
+        });
+    } else {
+      modal
+        .querySelectorAll(".ad-container-left .kakao_ad_area")
+        .forEach((ad) => {
+          ad.style.display = "block";
+        });
+      modal.querySelectorAll(".mobile-ad .kakao_ad_area").forEach((ad) => {
+        ad.style.display = "none";
+      });
+    }
+
+    if (window.adfit) {
+      window.adfit();
+    } else {
+      const adScript = document.createElement("script");
+      adScript.src = "//t1.daumcdn.net/kas/static/ba.min.js";
+      adScript.async = true;
+      document.body.appendChild(adScript);
+    }
+
+    modal.style.display = "block";
+  }
+
+  function calculateTotalResourcesForSearch(results) {
+    const partGroups = {};
+    let totalGoldButtons = 0;
+    let totalColorBalls = 0;
+
+    results.forEach((result) => {
+      const key = `${result.part}_${result.level}`;
+      if (!partGroups[key]) {
+        partGroups[key] = [];
+      }
+      partGroups[key].push(result);
+    });
+
+    Object.values(partGroups).forEach((group) => {
+      let hasFirstUnlocked = false;
+
+      group.forEach((stat) => {
+        if (stat.isUnlocked) {
+          hasFirstUnlocked = true;
+        }
+      });
+
+      if (!hasFirstUnlocked && group.length > 0) {
+        totalColorBalls += 500;
+
+        if (group.length > 1) {
+          totalGoldButtons += (group.length - 1) * 500;
+          totalColorBalls += (group.length - 1) * 1400;
+        }
+      } else {
+        group.forEach((stat) => {
+          const resources = calculateResourcesForStat(stat);
+          totalGoldButtons += resources.goldButtons;
+          totalColorBalls += resources.colorBalls;
+        });
+      }
+    });
+
+    return {
+      goldButtons: totalGoldButtons,
+      colorBalls: totalColorBalls,
+    };
+  }
+
+  function calculateResourcesForStat(stat) {
+    const goldButtons = stat.isUnlocked ? 0 : 500;
+
+    let colorBalls = 0;
+    if (stat.isUnlocked) {
+      if (stat.currentLevel < 1) colorBalls += 500;
+      if (stat.currentLevel < 2) colorBalls += 500;
+      if (stat.currentLevel < 3) colorBalls += 500;
+    } else {
+      colorBalls = 500;
+    }
+
+    return {
+      goldButtons: goldButtons,
+      colorBalls: colorBalls,
+    };
+  }
+
+  function calculateTotalResourcesForPreset(results) {
+    return calculateTotalResourcesForSearch(results);
+  }
+
+  function calculateResources() {
+    let goldButtons = 0;
+    let colorBalls = 0;
+
+    const partLevelGroups = {};
+
+    Object.entries(globalStatState).forEach(([cardId, state]) => {
+      if (!state.isUnlocked) return;
+
+      const groupKey = `${state.part}_${state.partLevel}`;
+      if (!partLevelGroups[groupKey]) {
+        partLevelGroups[groupKey] = [];
+      }
+      partLevelGroups[groupKey].push(state);
+    });
+
+    Object.entries(partLevelGroups).forEach(([groupKey, states]) => {
+      const firstStat = states.find((s) => s.isFirst);
+
+      states.forEach((state) => {
+        if (state.isFirst) {
+          if (state.level >= 1) colorBalls += 500;
+          if (state.level >= 2) colorBalls += 500;
+          if (state.level >= 3) colorBalls += 500;
+        } else {
+          goldButtons += 500;
+
+          if (state.level >= 1) colorBalls += 400;
+          if (state.level >= 2) colorBalls += 500;
+          if (state.level >= 3) colorBalls += 500;
+        }
+      });
+    });
+
+    return { goldButtons, colorBalls };
+  }
+
+  function updateTotalStats() {
+    const statTotals = {};
+    let totalProgress = 0;
+
+    Object.entries(globalStatState).forEach(([cardId, state]) => {
+      if (state.value > 0) {
+        const displayName = getDisplayStatName(state.statName);
+
+        if (!statTotals[displayName]) statTotals[displayName] = 0;
+        statTotals[displayName] += state.value;
+        totalProgress += state.level;
+      }
+    });
+
+    const resources = calculateResources();
+
+    updateSummary(totalProgress, statTotals, resources);
+  }
+
+  function updateSummary(totalProgress, statTotals, resources) {
+    const summaryDisplay = document.getElementById("summary-display");
+    if (!summaryDisplay) return;
+
+    let statSummaryHTML = "";
+
+    const sortedStats = Object.entries(statTotals).sort((a, b) => b[1] - a[1]);
+
+    if (sortedStats.length > 0) {
+      statSummaryHTML += `<div class="stat-list">`;
+      for (const [stat, value] of sortedStats) {
+        if (value > 0) {
+          statSummaryHTML += `
+                      <div class="stat-item">
+                          <span class="stat-name">${stat}</span> 
+                          <span class="stat-value">+${value}</span>
+                      </div>`;
+        }
+      }
+      statSummaryHTML += `</div>`;
+    } else {
+      statSummaryHTML = "<p>능력치가 개방되지 않았습니다.</p>";
+    }
+
+    summaryDisplay.innerHTML = `
+          <div class="summary-section">
+              ${statSummaryHTML}
+          </div>
+      `;
+  }
+
+  function createStatCard(statName, maxValue, container, cardId, statIndex) {
+    const statState = globalStatState[cardId] || {
+      level: 0,
+      value: 0,
+      isUnlocked: false,
+      isFirst: false,
+      part: selectedPart,
+      partLevel: selectedLevel,
+      statName: statName,
+      maxValue: maxValue,
+    };
+
+    let currentLevel = statState.level;
+    let currentValue = statState.value;
+    let isUnlocked = statState.isUnlocked;
+    let isFirst = statState.isFirst;
+
+    const displayStatName = getDisplayStatName(statName);
+
+    const card = document.createElement("div");
+    card.className = "stat-card";
+    card.dataset.statName = statName;
+    card.dataset.displayStatName = displayStatName;
+    card.dataset.part = selectedPart;
+    card.dataset.level = selectedLevel;
+    card.dataset.cardId = cardId;
+    card.dataset.statIndex = statIndex || 0;
+
+    const cardHeader = document.createElement("div");
+    cardHeader.className = "card-header";
+    cardHeader.style.display = "flex";
+    cardHeader.style.justifyContent = "space-between";
+    cardHeader.style.alignItems = "center";
+
+    const title = document.createElement("h3");
+    title.className = "text-lg font-bold";
+    title.textContent = displayStatName;
+
+    const resetBtn = document.createElement("button");
+    resetBtn.innerHTML = "↻";
+    resetBtn.className = "redistribute-btn";
+    resetBtn.title = "능력치 재분배";
+
+    resetBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      resetStat(cardId, card);
+    });
+
+    cardHeader.appendChild(title);
+    cardHeader.appendChild(resetBtn);
+
+    const valueDisplay = document.createElement("p");
+    valueDisplay.className = "value-display";
+    valueDisplay.textContent = `${currentValue} / ${maxValue}`;
+
+    const progressContainer = document.createElement("div");
+    progressContainer.className = "progress-container";
+
+    const progressDotsContainer = document.createElement("div");
+    progressDotsContainer.className = "progress-dots";
+
+    for (let i = 0; i < 3; i++) {
+      const dot = document.createElement("span");
+      dot.className = "progress-dot gray";
+
+      if (isUnlocked) {
+        if (i < currentLevel) {
+          dot.className = "progress-dot blue";
+        } else {
+          dot.className = "progress-dot yellow";
+        }
+      }
+
+      progressDotsContainer.appendChild(dot);
+    }
+
+    progressContainer.appendChild(progressDotsContainer);
+
+    const progressDisplay = document.createElement("p");
+    progressDisplay.className = "progress-display text-sm text-gray-600";
+    progressDisplay.textContent = `강화 단계: ${currentLevel}/3`;
+    progressContainer.appendChild(progressDisplay);
+
+    const actionButton = document.createElement("button");
+    actionButton.className = "action-btn";
+
+    const partLevelKey = `${selectedPart}_${selectedLevel}`;
+    const hasFirstUnlocked = firstUnlockedMap[partLevelKey] || false;
+
+    if (isUnlocked) {
+      if (currentLevel < 3) {
+        const orbCost = isFirst ? 500 : currentLevel === 0 ? 400 : 500;
+        actionButton.innerHTML = `<img src="assets/img/fivecolored-beads.jpg" alt="오색구슬" class="btn-icon"> <span>강화 ${orbCost}</span>`;
+      } else {
+        actionButton.innerHTML = `<span>완료</span>`;
+        actionButton.disabled = true;
+        actionButton.classList.add("disabled-btn");
+      }
+    } else {
+      if (hasFirstUnlocked) {
+        actionButton.innerHTML = `<img src="assets/img/gold-button.jpg" alt="황금단추" class="btn-icon"> <span>선택 500</span>`;
+      } else {
+        actionButton.innerHTML = `<img src="assets/img/fivecolored-beads.jpg" alt="오색구슬" class="btn-icon"> <span>선택 500</span>`;
+      }
+    }
+
+    actionButton.addEventListener("click", () => {
+      handleStatButtonClick(card, actionButton, statName, maxValue, cardId);
+    });
+
+    card.dataset.statName = statName;
+    card.dataset.maxValue = maxValue;
+    card.dataset.cardLevel = currentLevel;
+    card.dataset.value = currentValue;
+    card.dataset.isFirst = isFirst ? "true" : "false";
+    card.dataset.isUnlocked = isUnlocked ? "true" : "false";
+
+    card.appendChild(cardHeader);
+    card.appendChild(valueDisplay);
+    card.appendChild(progressContainer);
+    card.appendChild(actionButton);
+    container.appendChild(card);
+
+    return card;
+  }
+
+  function handleStatButtonClick(card, button, statName, maxValue, cardId) {
+    let currentLevel = parseInt(card.dataset.cardLevel || "0");
+    let currentValue = parseInt(card.dataset.value || "0");
+    let isUnlocked = card.dataset.isUnlocked === "true";
+    let isFirst = card.dataset.isFirst === "true";
+
+    const valueDisplay = card.querySelector("p.value-display");
+    const progressDisplay = card.querySelector("p.progress-display");
+
+    const partLevelKey = `${card.dataset.part}_${card.dataset.level}`;
+
+    if (!isUnlocked) {
+      let requiredGold = 0;
+
+      if (!firstUnlockedMap[partLevelKey]) {
+        requiredGold = 0;
+        isFirst = true;
+      } else {
+        requiredGold = 500;
+        isFirst = false;
+      }
+
+      if (isFirst) {
+        userColorBalls -= 500;
+      } else {
+        userGoldButtons -= requiredGold;
+      }
+
+      isUnlocked = true;
+
+      if (!firstUnlockedMap[partLevelKey]) {
+        firstUnlockedMap[partLevelKey] = true;
+        button.innerHTML = `<img src="assets/img/fivecolored-beads.jpg" alt="오색구슬" class="btn-icon"> <span>강화 500</span>`;
+        card.dataset.isFirst = "true";
+        card.dataset.isUnlocked = "true";
+
+        Array.from(document.querySelectorAll("#stats-display > div")).forEach(
+          (otherCard) => {
+            if (
+              otherCard !== card &&
+              otherCard.dataset.part === card.dataset.part &&
+              otherCard.dataset.level === card.dataset.level &&
+              otherCard.dataset.isUnlocked !== "true"
+            ) {
+              const otherButton = otherCard.querySelector(".action-btn");
+              if (otherButton) {
+                otherButton.innerHTML = `<img src="assets/img/gold-button.jpg" alt="황금단추" class="btn-icon"> <span>선택 500</span>`;
+              }
+            }
+          }
+        );
+      } else {
+        currentValue = Math.floor(maxValue / 15);
+        button.innerHTML = `<img src="assets/img/fivecolored-beads.jpg" alt="오색구슬" class="btn-icon"> <span>강화 400</span>`;
+        card.dataset.isFirst = "false";
+        card.dataset.isUnlocked = "true";
+      }
+
+      card.dataset.cardLevel = currentLevel;
+      card.dataset.value = currentValue;
+
+      if (valueDisplay)
+        valueDisplay.textContent = `${currentValue} / ${maxValue}`;
+      if (progressDisplay)
+        progressDisplay.textContent = `강화 단계: ${currentLevel}/3`;
+
+      updateStatGlobalState(
+        cardId,
+        currentLevel,
+        currentValue,
+        isUnlocked,
+        isFirst,
+        card.dataset.part,
+        card.dataset.level,
+        statName,
+        maxValue
+      );
+      updateTotalStats();
+      updateStatCardStatus();
+      updateLevelButtonIndicators();
+      updateResourceSummary();
+      return;
+    }
+
+    if (currentLevel < 3) {
+      let requiredOrbs = 0;
+
+      if (isFirst) {
+        requiredOrbs = 500;
+      } else {
+        if (currentLevel === 0) {
+          requiredOrbs = 400;
+        } else {
+          requiredOrbs = 500;
+        }
+      }
+
+      userColorBalls -= requiredOrbs;
+
+      currentLevel++;
+
+      if (isFirst) {
+        currentValue = Math.floor((maxValue / 3) * currentLevel);
+      } else {
+        if (currentLevel === 1) {
+          const initial = Math.floor(maxValue / 15);
+          const diff = Math.floor(maxValue / 3) - initial;
+          currentValue = initial + diff;
+        } else {
+          currentValue += Math.floor(maxValue / 3);
+          if (currentValue > maxValue) currentValue = maxValue;
+        }
+      }
+
+      card.dataset.cardLevel = currentLevel;
+      card.dataset.value = currentValue;
+
+      if (valueDisplay)
+        valueDisplay.textContent = `${currentValue} / ${maxValue}`;
+      if (progressDisplay)
+        progressDisplay.textContent = `강화 단계: ${currentLevel}/3`;
+
+      if (currentLevel < 3) {
+        const nextOrbCost = currentLevel < 2 ? 500 : 500;
+        button.innerHTML = `<img src="assets/img/fivecolored-beads.jpg" alt="오색구슬" class="btn-icon"> <span>강화 ${nextOrbCost}</span>`;
+      } else {
+        button.innerHTML = `<span>완료</span>`;
+        button.disabled = true;
+        button.classList.add("disabled-btn");
+      }
+
+      updateStatGlobalState(
+        cardId,
+        currentLevel,
+        currentValue,
+        isUnlocked,
+        isFirst,
+        card.dataset.part,
+        card.dataset.level,
+        statName,
+        maxValue
+      );
+      updateTotalStats();
+      updateStatCardStatus();
+      updateLevelButtonIndicators();
+      updateResourceSummary();
+
+      if (
+        document.getElementById("search-results-modal").style.display ===
+        "block"
+      ) {
+        showSearchResults();
+      }
+    }
+  }
+
+  function updateStatGlobalState(
+    cardId,
+    level,
+    value,
+    isUnlocked,
+    isFirst,
+    part,
+    partLevel,
+    statName,
+    maxValue
+  ) {
+    globalStatState[cardId] = {
+      level,
+      value,
+      isUnlocked,
+      isFirst,
+      part,
+      partLevel,
+      statName,
+      maxValue,
+    };
+  }
+
+  function resetStat(cardId, card) {
+    const maxValue = parseInt(card.dataset.maxValue || "0");
+    const statName = card.dataset.statName;
+    const part = card.dataset.part;
+    const level = card.dataset.level;
+
+    const partLevelKey = `${part}_${level}`;
+    const isUnlocked = card.dataset.isUnlocked === "true";
+    const isFirst = card.dataset.isFirst === "true";
+    const currentLevel = parseInt(card.dataset.cardLevel || "0");
+
+    if (isFirst && isUnlocked) {
+      firstUnlockedMap[partLevelKey] = false;
+
+      if (currentLevel >= 1) userColorBalls += 500;
+      if (currentLevel >= 2) userColorBalls += 500;
+      if (currentLevel >= 3) userColorBalls += 500;
+    } else if (isUnlocked) {
+      userGoldButtons += 500;
+
+      if (currentLevel >= 1) userColorBalls += 400;
+      if (currentLevel >= 2) userColorBalls += 500;
+      if (currentLevel >= 3) userColorBalls += 500;
+    }
+
+    delete globalStatState[cardId];
+
+    card.dataset.cardLevel = "0";
+    card.dataset.value = "0";
+    card.dataset.isFirst = "false";
+    card.dataset.isUnlocked = "false";
+
+    const valueDisplay = card.querySelector("p.value-display");
+    if (valueDisplay) {
+      valueDisplay.textContent = `0 / ${maxValue}`;
+    }
+
+    const progressDisplay = card.querySelector("p.progress-display");
+    if (progressDisplay) {
+      progressDisplay.textContent = `강화 단계: 0/3`;
+    }
+
+    let hasFirstUnlockedInPartLevel = false;
+
+    document
+      .querySelectorAll(
+        `#stats-display > div[data-part="${part}"][data-level="${level}"]`
+      )
+      .forEach((otherCard) => {
+        if (
+          otherCard.dataset.isUnlocked === "true" &&
+          otherCard.dataset.isFirst === "true"
+        ) {
+          hasFirstUnlockedInPartLevel = true;
+        }
+      });
+
+    firstUnlockedMap[partLevelKey] = hasFirstUnlockedInPartLevel;
+
+    document
+      .querySelectorAll(
+        `#stats-display > div[data-part="${part}"][data-level="${level}"]`
+      )
+      .forEach((otherCard) => {
+        if (otherCard.dataset.isUnlocked !== "true") {
+          const otherButton = otherCard.querySelector(".action-btn");
+          if (otherButton) {
+            if (hasFirstUnlockedInPartLevel) {
+              otherButton.innerHTML = `<img src="assets/img/gold-button.jpg" alt="황금단추" class="btn-icon"> <span>선택 500</span>`;
+            } else {
+              otherButton.innerHTML = `<img src="assets/img/fivecolored-beads.jpg" alt="오색구슬" class="btn-icon"> <span>선택 500</span>`;
+            }
+          }
+        }
+      });
+
+    const actionButton = card.querySelector(".action-btn");
+    if (actionButton) {
+      if (hasFirstUnlockedInPartLevel) {
+        actionButton.innerHTML = `<img src="assets/img/gold-button.jpg" alt="황금단추" class="btn-icon"> <span>선택 500</span>`;
+      } else {
+        actionButton.innerHTML = `<img src="assets/img/fivecolored-beads.jpg" alt="오색구슬" class="btn-icon"> <span>선택 500</span>`;
+      }
+      actionButton.disabled = false;
+      actionButton.classList.remove("disabled-btn");
+    }
+
+    updateResourceDisplay();
+    updateTotalStats();
+    updateStatCardStatus();
+    updateLevelButtonIndicators();
+    updateResourceSummary();
+
+    if (
+      document.getElementById("search-results-modal").style.display === "block"
+    ) {
+      showSearchResults();
+    }
+  }
+
+  function initUI() {
+    const goldButtonInput = document.getElementById("gold-button");
+    const colorBallInput = document.getElementById("color-ball");
+
+    if (goldButtonInput) {
+      goldButtonInput.addEventListener("change", updateUserResources);
+      goldButtonInput.addEventListener("input", updateUserResources);
+      userInputGoldButtons = parseInt(goldButtonInput.value) || 10000;
+      userGoldButtons = userInputGoldButtons;
+    }
+
+    if (colorBallInput) {
+      colorBallInput.addEventListener("change", updateUserResources);
+      colorBallInput.addEventListener("input", updateUserResources);
+      userInputColorBalls = parseInt(colorBallInput.value) || 10000;
+      userColorBalls = userInputColorBalls;
+    }
+
+    const searchInput = document.getElementById("search-input");
+    if (searchInput) {
+      searchInput.addEventListener("click", function (e) {
+        e.stopPropagation();
+        toggleStatOptions(true);
+      });
+
+      searchInput.addEventListener("focus", function () {
+        toggleStatOptions(true);
+      });
+
+      searchInput.addEventListener("input", function () {
+        filterStatOptions(this.value);
+      });
+
+      searchInput.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          searchStats();
+        }
+      });
+    }
+
+    document.addEventListener("click", function (e) {
+      const statOptions = document.getElementById("stat-options");
+      const searchInput = document.getElementById("search-input");
+
+      if (statOptions && searchInput) {
+        if (
+          !searchInput.contains(e.target) &&
+          !statOptions.contains(e.target)
+        ) {
+          toggleStatOptions(false);
+        }
+      }
+    });
+
+    updateResourceDisplay();
+    updateResourceSummary();
+
+    PARTS.forEach((part) => {
+      const btn = document.createElement("button");
+      btn.className = "selector-btn equip-btn";
+      btn.textContent = part;
+      btn.addEventListener("click", () => {
+        selectedPart = part;
+        highlightSelection(equipmentContainer, btn, "equip-btn");
+        renderStats();
+      });
+      equipmentContainer.appendChild(btn);
+
+      if (part === "투구") {
+        btn.classList.add("bg-sky-500", "text-white", "font-bold");
+      }
+    });
+
+    LEVELS.forEach((level) => {
+      const btn = document.createElement("button");
+      btn.className = "selector-btn level-btn";
+
+      const levelText = document.createElement("div");
+      levelText.className = "level-text";
+      levelText.textContent = level;
+      btn.appendChild(levelText);
+
+      const progressContainer = document.createElement("div");
+      progressContainer.className = "level-progress-container";
+
+      const statusText = document.createElement("div");
+      statusText.className = "level-status";
+      statusText.textContent = "";
+
+      const progressBar = document.createElement("div");
+      progressBar.className = "level-progress-bar empty";
+      progressBar.style.width = "0%";
+
+      progressContainer.appendChild(statusText);
+      progressContainer.appendChild(progressBar);
+      btn.appendChild(progressContainer);
+
+      const dotsContainer = document.createElement("div");
+      dotsContainer.className = "progress-dots";
+
+      for (let i = 0; i < 4; i++) {
+        const dot = document.createElement("span");
+        dot.className = "progress-dot gray";
+        dotsContainer.appendChild(dot);
+      }
+
+      btn.appendChild(dotsContainer);
+
+      btn.addEventListener("click", () => {
+        selectedLevel = level;
+        highlightSelection(levelContainer, btn, "level-btn");
+        renderStats();
+      });
+      levelContainer.appendChild(btn);
+
+      if (level === "+9") {
+        btn.classList.add("bg-emerald-500", "text-white", "font-bold");
+      }
+    });
+  }
+
+  async function loadChakData() {
+    try {
+      const data = await getCachedData(
+        "chakData",
+        async () => {
+          return await getFirestoreDocument("chak.json");
+        },
+        24
+      );
+
+      equipmentData = data;
+      allAvailableStats = collectAllStatNames();
+      initUI();
+      populateStatOptions();
+      renderStats();
+      updateResourceSummary();
+    } catch (error) {
+      console.error("Failed to load chak data:", error);
+      if (statsContainer) {
+        statsContainer.innerHTML = `<p class="text-red-500">${
+          error.message || "데이터를 불러오는 데 실패했습니다."
+        }</p>`;
+      }
+
+      try {
+        const response = await fetch("output/chak.json");
+        const data = await response.json();
+        equipmentData = data;
+        allAvailableStats = collectAllStatNames();
+        initUI();
+        populateStatOptions();
+        renderStats();
+        updateResourceSummary();
+      } catch (fallbackError) {
+        console.error("Local fallback also failed:", fallbackError);
+        if (statsContainer) {
+          statsContainer.innerHTML = `<p class="text-red-500">데이터를 불러오는 데 실패했습니다.</p>`;
+        }
+      }
+    }
+  }
+
+  function closeSearchResults() {
+    const modal = document.getElementById("search-results-modal");
+    if (modal) {
+      modal.style.display = "none";
+    }
+  }
+
+  function closeOptimizeResults() {
+    const modal = document.getElementById("optimize-results-modal");
+    if (modal) {
+      modal.style.display = "none";
+    }
+    optimizationPlan = null;
+  }
+
+  function highlightStatInResults(statName) {
+    const allGroups = document.querySelectorAll(".compact-group");
+    allGroups.forEach((group) => {
+      if (group.getAttribute("data-stat") === statName) {
+        const groupId = group
+          .querySelector(".compact-stat-title")
+          .getAttribute("data-target");
+        const content = document.getElementById(groupId);
+        const icon = group.querySelector(".toggle-icon");
+
+        if (content.style.display === "none") {
+          content.style.display = "block";
+          icon.textContent = "▼";
+          content.style.maxHeight = content.scrollHeight + "px";
+        }
+
+        group.scrollIntoView({ behavior: "smooth", block: "start" });
+
+        group.classList.add("highlight-group");
+        setTimeout(() => {
+          group.classList.remove("highlight-group");
+        }, 1500);
+      }
+    });
+  }
+
+  function selectStatFromSearch(part, level) {
+    const partButtons = document.querySelectorAll(".equip-btn");
+    let partButton = null;
+
+    for (const btn of partButtons) {
+      if (btn.textContent === part) {
+        partButton = btn;
+        break;
+      }
+    }
+
+    if (partButton) {
+      selectedPart = part;
+      highlightSelection(equipmentContainer, partButton, "equip-btn");
+    }
+
+    const levelButtons = document.querySelectorAll(".level-btn");
+    let levelButton = null;
+
+    for (const btn of levelButtons) {
+      const levelText = btn.querySelector(".level-text");
+      if (levelText && levelText.textContent === level) {
+        levelButton = btn;
+        break;
+      }
+    }
+
+    if (levelButton) {
+      selectedLevel = level;
+      highlightSelection(levelContainer, levelButton, "level-btn");
+    }
+
+    renderStats();
+
+    closeSearchResults();
+  }
+
+  function selectStatFromPreset(part, level) {
+    selectStatFromSearch(part, level);
+    closeOptimizeResults();
+  }
+
+  function optimizeStats(preset) {
+    let targetStats = [];
+    let presetName = "";
+
+    if (preset === "boss") {
+      targetStats = BOSS_STATS;
+      presetName = "보스용";
+    } else if (preset === "pvp") {
+      targetStats = PVP_STATS;
+      presetName = "PvP용";
+    } else {
+      alert("유효하지 않은 프리셋입니다.");
+      return;
+    }
+
+    showPresetSearchResults(presetName, targetStats);
+  }
+
+  return {
+    initUI,
+    loadChakData,
+    searchStats,
+    removeSelectedStat,
+    highlightStatInResults,
+    selectStatFromSearch,
+    selectStatFromPreset,
+    closeSearchResults,
+    closeOptimizeResults,
+    optimizeStats,
+  };
+})();
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+ChakApp.loadChakData();

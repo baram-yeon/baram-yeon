@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>바연화연 - 환수정보</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="description" content="바람의나라: 연 환수정보, 환수 결속, 환수혼 계산기 등 게임 관련 도구 모음">
+
+    <link rel="icon" type="image/png" href="assets/img/BHY.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/img/BHY.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/img/BHY.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/img/BHY.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+    <link href="assets/css/global.css" rel="stylesheet">
+    <link href="assets/css/imageCategory.css" rel="stylesheet">
+    <link href="assets/css/info.css" rel="stylesheet">
+    <link href="assets/css/components/ads.css" rel="stylesheet">
+    <link href="assets/css/components/footer.css" rel="stylesheet">
+    <link href="assets/css/components/header.css" rel="stylesheet">
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js?v=1746712568"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js?v=1746712568"></script>
+</head>
+
+<body>
+    <header class="header">
+        <div class="logo-container">
+            <a href="info.html">
+                <img src="assets/img/BHY.png" alt="바연화연 로고" class="logo">
+            </a>
+        </div>
+        <nav class="tabs">
+            <div class="tab active" onclick="location.href='info.html'">환수정보</div>
+            <div class="tab" onclick="location.href='bondCalculator.html'">환수 결속</div>
+            <div class="tab" onclick="location.href='soulCalculator.html'">환수혼 계산</div>
+            <div class="tab" onclick="location.href='chak.html'">착 계산</div>
+        </nav>
+    </header>
+
+    <div class="sub-tabs" id="subTabs">
+        <div class="tab active" data-category="수호">수호</div>
+        <div class="tab" data-category="탑승">탑승</div>
+        <div class="tab" data-category="변신">변신</div>
+    </div>
+
+    <div class="ad-row">
+        <div class="ad-container-left">
+            <ins class="kakao_ad_area" style="display:none;" data-ad-unit="DAN-XTAnZwWzQOT46c36" data-ad-width="728"
+                data-ad-height="90"></ins>
+        </div>
+        <div class="ad-container-right">
+            <ins class="kakao_ad_area" style="display:none;" data-ad-unit="DAN-l6ShIzRdMfSOcB8v" data-ad-width="728"
+                data-ad-height="90"></ins>
+        </div>
+    </div>
+
+    <div class="ad-container mobile-ad">
+        <ins class="kakao_ad_area" style="display:none;" data-ad-unit="DAN-UDsuae5QVIAxX2fS" data-ad-width="320"
+            data-ad-height="50"></ins>
+    </div>
+    <div class="view-toggle-container">
+        <label class="toggle-switch">
+            <input type="checkbox" id="influenceToggle">
+            <span class="slider round"></span>
+        </label>
+        <span class="toggle-label">세력별 보기</span>
+    </div>
+    <div class="image-container" id="imageContainer">
+    </div>
+
+    <div class="ad-row">
+        <div class="ad-container-left">
+            <ins class="kakao_ad_area" style="display:none;" data-ad-unit="DAN-3TYDe2ScVF7pn7fU" data-ad-width="728"
+                data-ad-height="90"></ins>
+        </div>
+        <div class="ad-container-right">
+            <ins class="kakao_ad_area" style="display:none;" data-ad-unit="DAN-Sxen5zACA7yhBeet" data-ad-width="728"
+                data-ad-height="90"></ins>
+        </div>
+    </div>
+
+    <div class="ad-container mobile-ad">
+        <ins class="kakao_ad_area" style="display:none;" data-ad-unit="DAN-Xtg9TanJcnXcaIaY" data-ad-width="320"
+            data-ad-height="50"></ins>
+    </div>
+
+    <div class="report-container">
+        <button class="report-btn" onclick="openReportSheet()">
+            <span class="report-icon">📋</span>
+            <span class="report-text">제보하기</span>
+            <span class="report-spark">✨</span>
+        </button>
+    </div>
+    <div class="help-container">
+        <button class="help-btn" id="helpBtn" aria-label="도움말">
+            <span class="help-icon">?</span>
+        </button>
+        <div class="help-tooltip" id="helpTooltip">
+            <div class="help-content">
+                <div class="help-header">
+                    <h3>리본 표시 안내</h3>
+                    <button class="close-help" id="closeHelp">&times;</button>
+                </div>
+                <ul class="help-list">
+                    <li><span class="ribbon ribbon-r">R</span> 환수 등록 정보가 0~25 레벨 전부 있는 경우 왼쪽 상단에 표시</li>
+                    <li><span class="ribbon ribbon-b">B</span> 환수 장착 정보가 0~25 레벨 전부 있는 경우 오른쪽 상단에 표시</li>
+                    <li><span class="level25-indicator">25</span>환수 장착 정보에 25레벨이 존재하는 경우 오른쪽 하단에 표시</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <footer class="site-footer">
+        <div class="footer-desktop">
+            <div class="footer-links">
+                <a href="info.html">환수정보</a>
+                <a href="bondCalculator.html">환수 결속</a>
+                <a href="soulCalculator.html">환수혼 계산</a>
+                <a href="chak.html">착 계산</a>
+                <button class="footer-report-btn" onclick="openReportSheet()">제보하기</button>
+            </div>
+        </div>
+        <div class="footer-copyright">
+            <p>&copy; 2025 바연 화연 | <a href="https://baramy.nexon.com/" target="_blank">바람의나라:연</a>과 공식 관련 없음</p>
+        </div>
+    </footer>
+
+    <script src="assets/js/common.js?v=1746712568"></script>
+    <script src="assets/js/firebaseHandler.js?v=1746712568"></script>
+    <script src="assets/js/firebaseConfig.js?v=1746712568"></script>
+    <script src="assets/js/dataManager.js?v=1746712568"></script>
+    <script src="assets/js/uiRenderer.js?v=1746712568"></script>
+    <script src="assets/js/modalHandler.js?v=1746712568"></script>
+    <script src="assets/js/imageHandler-compat.js?v=1746712568"></script>
+    <script src="assets/js/info.js?v=1746712568"></script>
+    <script src="assets/js/infoInit.js?v=1746712568"></script>
+    <script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js?v=1746712568" async></script>
+    <script>
+        (function () {
+            let adRetries = 0;
+            const maxRetries = 5;
+
+            function checkAdsVisibility() {
+                let adElements = document.querySelectorAll('.kakao_ad_area');
+                let anyVisible = false;
+
+                adElements.forEach(function (ad) {
+                    if (ad.offsetHeight > 1 && ad.innerHTML !== '') {
+                        anyVisible = true;
+                    }
+                });
+
+                if (!anyVisible && adRetries < maxRetries) {
+                    console.log(`광고가 로드되지 않았습니다. 재시도 ${adRetries + 1}/${maxRetries}`);
+                    reloadKakaoAdScript();
+                    adRetries++;
+                    setTimeout(checkAdsVisibility, 2000);
+                }
+            }
+
+            function reloadKakaoAdScript() {
+                const script = document.createElement('script');
+                script.src = '//t1.daumcdn.net/kas/static/ba.min.js?v=1746712568';
+                script.async = true;
+                document.body.appendChild(script);
+            }
+
+            function handleVisibilityChange() {
+                if (document.visibilityState === 'visible') {
+                    reloadKakaoAdScript();
+                    setTimeout(checkAdsVisibility, 1000);
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', function () {
+                setTimeout(checkAdsVisibility, 2000);
+            });
+
+            document.addEventListener('visibilitychange', handleVisibilityChange);
+
+            window.addEventListener('load', function () {
+                setTimeout(checkAdsVisibility, 1000);
+            });
+
+            window.addEventListener('focus', function () {
+                reloadKakaoAdScript();
+            });
+        })();
+    </script>
+</body>
+
+</html>

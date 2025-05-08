@@ -1,1 +1,53 @@
-function openReportSheet(){window.open("https://forms.gle/v1F41Dq2GxhbJKmBA","_blank")}document.addEventListener("DOMContentLoaded",(function(){InfoApp.initialize();var e=window.innerWidth<=768;localStorage.setItem("isMobileView",e);const t=document.getElementById("helpBtn"),n=document.getElementById("helpTooltip"),i=document.getElementById("closeHelp");var o,l,d;t.addEventListener("click",(function(){n.style.display="block"===n.style.display?"none":"block"})),i.addEventListener("click",(function(){n.style.display="none"})),document.addEventListener("click",(function(e){n.contains(e.target)||t.contains(e.target)||"block"!==n.style.display||(n.style.display="none")})),window.addEventListener("resize",(o=function(){var e="true"===localStorage.getItem("isMobileView"),t=window.innerWidth<=768;e!==t&&(localStorage.setItem("isMobileView",t),location.reload())},l=250,function(){var e=this,t=arguments;clearTimeout(d),d=setTimeout((function(){o.apply(e,t)}),l)}))}));
+document.addEventListener("DOMContentLoaded", function () {
+  InfoApp.initialize();
+  var isMobile = window.innerWidth <= 768;
+  localStorage.setItem("isMobileView", isMobile);
+
+  function debounce(func, wait) {
+    var timeout;
+    return function () {
+      var context = this,
+        args = arguments;
+      clearTimeout(timeout);
+      timeout = setTimeout(function () {
+        func.apply(context, args);
+      }, wait);
+    };
+  }
+  const helpBtn = document.getElementById("helpBtn");
+  const helpTooltip = document.getElementById("helpTooltip");
+  const closeHelp = document.getElementById("closeHelp");
+
+  helpBtn.addEventListener("click", function () {
+    helpTooltip.style.display =
+      helpTooltip.style.display === "block" ? "none" : "block";
+  });
+
+  closeHelp.addEventListener("click", function () {
+    helpTooltip.style.display = "none";
+  });
+
+  document.addEventListener("click", function (event) {
+    const isClickInsideHelp =
+      helpTooltip.contains(event.target) || helpBtn.contains(event.target);
+    if (!isClickInsideHelp && helpTooltip.style.display === "block") {
+      helpTooltip.style.display = "none";
+    }
+  });
+  window.addEventListener(
+    "resize",
+    debounce(function () {
+      var wasMobile = localStorage.getItem("isMobileView") === "true";
+      var isMobile = window.innerWidth <= 768;
+
+      if (wasMobile !== isMobile) {
+        localStorage.setItem("isMobileView", isMobile);
+        location.reload();
+      }
+    }, 250)
+  );
+});
+
+function openReportSheet() {
+  window.open("https://forms.gle/v1F41Dq2GxhbJKmBA", "_blank");
+}

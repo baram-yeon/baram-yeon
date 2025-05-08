@@ -1,1 +1,456 @@
-window.UIRenderer=window.UIRenderer||function(){let e="수호",t=!1,n=!1,o=null,a=!1;function l(){document.querySelectorAll(".sub-tabs .tab").forEach((t=>{t.addEventListener("click",(function(){const n=t.getAttribute("data-category");e=n,c(e),window.BondCalculatorApp&&("function"==typeof window.BondCalculatorApp.showCategory&&window.BondCalculatorApp.showCategory(e,!1),"function"==typeof window.BondCalculatorApp.updateSelectedCount&&setTimeout((()=>window.BondCalculatorApp.updateSelectedCount(e)),50))}))}));const d=document.getElementById("influenceToggle");d?(d.addEventListener("change",(function(){document.querySelectorAll(".level25-indicator").forEach((e=>{e.style.opacity="0"})),t=d.checked,c(e,{selectMode:n,onSelect:o}),window.BondCalculatorApp&&setTimeout((()=>{"function"==typeof window.BondCalculatorApp.applySelectedState&&window.BondCalculatorApp.applySelectedState()}),100)})),d.checked=t):console.warn("Influence toggle switch not found in the DOM."),function(){const e=document.getElementById("helpBtn"),t=document.getElementById("helpTooltip"),n=document.getElementById("closeHelp");e&&t&&n&&(e.addEventListener("click",(e=>{e.stopPropagation(),t.style.display="block"===t.style.display?"none":"block"})),n.addEventListener("click",(()=>{t.style.display="none"})),document.addEventListener("click",(n=>{"block"!==t.style.display||t.contains(n.target)||e.contains(n.target)||(t.style.display="none")})))}(),window.addEventListener("resize",(function(){a||(clearTimeout(l.resizeTimer),l.resizeTimer=setTimeout(i,100))})),setTimeout(i,200)}function c(a,l={}){const c=e;e=a,void 0!==l.selectMode&&(n=l.selectMode),"function"==typeof l.onSelect&&(o=l.onSelect);const s=document.getElementById("imageContainer");s?(s.innerHTML="",document.querySelectorAll(".sub-tabs .tab").forEach((e=>{e.classList.remove("active"),e.getAttribute("data-category")===a&&e.classList.add("active")})),t?r(a,s):d(a,s),c!==a&&window.BondCalculatorApp&&"function"==typeof window.BondCalculatorApp.updateSelectedCount&&setTimeout((()=>window.BondCalculatorApp.updateSelectedCount(a)),0),setTimeout(i,50)):console.error("Image container not found!")}function i(){if(a)return;a=!0;const e=document.querySelectorAll(".img-box");let t=0;function n(e,t){const n=e.offsetWidth,o=Math.max(10,Math.min(Math.round(.08*n),20)),a=Math.max(6,Math.round(.6*o));t.style.width=o+"px",t.style.height=o+"px";const l=t.querySelector("span");l&&(l.style.fontSize=a+"px");const c=Math.max(3,Math.min(Math.round(.02*n),6));t.style.right=c+"px",t.style.bottom=c+"px",t.style.opacity="1"}e.forEach((e=>{const o=e.querySelector("img"),l=e.querySelector(".level25-indicator");o&&l&&(o.complete?n(o,l):(t++,o.onload=function(){n(o,l),t--,0===t&&(a=!1)}))})),0===t&&(a=!1)}function d(e,t){t.className="image-container-grid";const o=window.DataManager.getData(e);o&&Array.isArray(o)&&0!==o.length?(o.forEach((n=>{if(!n||!n.image||!n.name)return;const o=u(n,e);t.appendChild(o)})),n&&window.BondCalculatorApp&&"function"==typeof window.BondCalculatorApp.applySelectedState&&setTimeout((()=>window.BondCalculatorApp.applySelectedState()),50)):t.innerHTML=`<p>표시할 ${e} 환수 정보가 없습니다.</p>`}function r(e,t){t.className="image-container-grouped";const o=window.DataManager.getData(e);if(!o||!Array.isArray(o)||0===o.length)return void(t.innerHTML=`<p>표시할 ${e} 환수 정보가 없습니다.</p>`);const a=document.createElement("div");a.className="influence-row";let l=!1;["결의","고요","의지"].forEach((t=>{const n=s(e,t,o);n&&(a.appendChild(n),l=!0)})),l&&t.appendChild(a);const c=document.createElement("div");c.className="influence-row";let i=!1;["침착","냉정","활력"].forEach((t=>{const n=s(e,t,o);n&&(c.appendChild(n),i=!0)})),i&&t.appendChild(c),!l&&!i&&o.length>0?t.innerHTML=`<p>알려진 세력에 속하지 않는 ${e} 환수가 있습니다.</p>`:l||i||(t.innerHTML=`<p>표시할 ${e} 환수 정보가 없습니다.</p>`),n&&window.BondCalculatorApp&&"function"==typeof window.BondCalculatorApp.applySelectedState&&setTimeout((()=>window.BondCalculatorApp.applySelectedState()),100)}function s(e,t,n){if(!window.DataManager.FACTION_ICONS)return console.error("FACTION_ICONS is not available!"),null;const o=n.filter((e=>e&&e.influence===t));if(0===o.length)return null;const a=document.createElement("div");a.className="influence-group";const l=document.createElement("div");l.className="header-wrapper";const c=document.createElement("img"),i=window.DataManager.FACTION_ICONS[t];i?(c.src=i,c.alt=`${t} 아이콘`,c.className="influence-icon",l.appendChild(c)):console.warn(`Icon not found for influence: ${t}.`);const d=document.createElement("h3");d.className="influence-header",d.textContent=t;const r=document.createElement("span");r.className="influence-count",r.textContent=` (${o.length})`,d.appendChild(r),l.appendChild(d),a.appendChild(l);const s=document.createElement("div");return s.className="influence-items",o.forEach((t=>{if(!t||!t.image||!t.name)return;const n=u(t,e);s.appendChild(n)})),a.appendChild(s),a}function u(e,t){const a=document.createElement("div");a.className="img-wrapper";const l=document.createElement("div");l.className="img-box",a.appendChild(l);const{hasFullRegistration:c,hasFullBind:i}=window.DataManager.checkSpiritStats(e);if(c){const e=document.createElement("div");e.className="ribbon-left",e.innerHTML="<span>R</span>",e.title="등록 효과 전체 보유",l.appendChild(e)}if(i){const e=document.createElement("div");e.className="ribbon-right",e.innerHTML="<span>B</span>",e.title="결속 효과 전체 보유",l.appendChild(e)}const d=document.createElement("img");if(d.src=e.image,d.alt=e.name,d.title=e.name,d.loading="lazy",d.dataset.category=t,d.dataset.image=e.image,d.dataset.influence=e.influence||"",l.appendChild(d),window.DataManager.hasLevel25BindStats(e)){const e=document.createElement("div");e.className="level25-indicator",e.innerHTML="<span>25</span>",e.title="25레벨 결속 효과 보유",e.style.opacity="0",l.appendChild(e)}n&&o?(l.addEventListener("click",(function(){o(e,t)})),l.style.cursor="pointer"):(l.addEventListener("click",(function(){window.ModalHandler&&window.ModalHandler.showInfo(t,e.image,e.influence)})),l.style.cursor="pointer");const r=document.createElement("small");return r.className="img-name",r.textContent=e.name,a.appendChild(r),a}return l.resizeTimer=null,{initUIEvents:l,showCategory:c,displayAllPets:d,displayPetsByInfluence:r,createInfluenceGroup:s,setSelectionMode:function(t,a){return n=!0===t,o="function"==typeof a?a:null,c(e,{selectMode:n,onSelect:o}),n},getCurrentCategory:function(){return e},adjustIndicatorSize:i}}();
+window.UIRenderer =
+  window.UIRenderer ||
+  (function () {
+    let currentCategory = "수호";
+    let groupByInfluence = false;
+    let selectionMode = false;
+    let selectionCallback = null;
+    let isAdjusting = false;
+
+    function initUIEvents() {
+      const subTabs = document.querySelectorAll(".sub-tabs .tab");
+      subTabs.forEach((tab) => {
+        tab.addEventListener("click", function () {
+          const newCategory = tab.getAttribute("data-category");
+          currentCategory = newCategory;
+
+          showCategory(currentCategory);
+
+          if (window.BondCalculatorApp) {
+            if (typeof window.BondCalculatorApp.showCategory === "function") {
+              window.BondCalculatorApp.showCategory(currentCategory, false);
+            }
+
+            if (
+              typeof window.BondCalculatorApp.updateSelectedCount === "function"
+            ) {
+              setTimeout(
+                () =>
+                  window.BondCalculatorApp.updateSelectedCount(currentCategory),
+                50
+              );
+            }
+          }
+        });
+      });
+
+      const toggle = document.getElementById("influenceToggle");
+      if (toggle) {
+        toggle.addEventListener("change", function () {
+          document.querySelectorAll(".level25-indicator").forEach((ind) => {
+            ind.style.opacity = "0";
+          });
+
+          groupByInfluence = toggle.checked;
+
+          showCategory(currentCategory, {
+            selectMode: selectionMode,
+            onSelect: selectionCallback,
+          });
+
+          if (window.BondCalculatorApp) {
+            setTimeout(() => {
+              if (
+                typeof window.BondCalculatorApp.applySelectedState ===
+                "function"
+              ) {
+                window.BondCalculatorApp.applySelectedState();
+              }
+            }, 100);
+          }
+        });
+        toggle.checked = groupByInfluence;
+      } else {
+        console.warn("Influence toggle switch not found in the DOM.");
+      }
+
+      initHelpTooltip();
+
+      window.addEventListener("resize", function () {
+        if (!isAdjusting) {
+          clearTimeout(initUIEvents.resizeTimer);
+          initUIEvents.resizeTimer = setTimeout(adjustIndicatorSize, 100);
+        }
+      });
+
+      setTimeout(adjustIndicatorSize, 200);
+    }
+    initUIEvents.resizeTimer = null;
+
+    function initHelpTooltip() {
+      const helpBtn = document.getElementById("helpBtn");
+      const helpTooltip = document.getElementById("helpTooltip");
+      const closeHelpBtn = document.getElementById("closeHelp");
+
+      if (helpBtn && helpTooltip && closeHelpBtn) {
+        helpBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          helpTooltip.style.display =
+            helpTooltip.style.display === "block" ? "none" : "block";
+        });
+
+        closeHelpBtn.addEventListener("click", () => {
+          helpTooltip.style.display = "none";
+        });
+
+        document.addEventListener("click", (event) => {
+          if (
+            helpTooltip.style.display === "block" &&
+            !helpTooltip.contains(event.target) &&
+            !helpBtn.contains(event.target)
+          ) {
+            helpTooltip.style.display = "none";
+          }
+        });
+      }
+    }
+
+    function showCategory(category, options = {}) {
+      const prevCategory = currentCategory;
+      currentCategory = category;
+
+      if (options.selectMode !== undefined) {
+        selectionMode = options.selectMode;
+      }
+
+      if (typeof options.onSelect === "function") {
+        selectionCallback = options.onSelect;
+      }
+
+      const container = document.getElementById("imageContainer");
+      if (!container) {
+        console.error("Image container not found!");
+        return;
+      }
+      container.innerHTML = "";
+
+      document.querySelectorAll(".sub-tabs .tab").forEach((tab) => {
+        tab.classList.remove("active");
+        if (tab.getAttribute("data-category") === category) {
+          tab.classList.add("active");
+        }
+      });
+
+      if (groupByInfluence) {
+        displayPetsByInfluence(category, container);
+      } else {
+        displayAllPets(category, container);
+      }
+
+      if (
+        prevCategory !== category &&
+        window.BondCalculatorApp &&
+        typeof window.BondCalculatorApp.updateSelectedCount === "function"
+      ) {
+        setTimeout(
+          () => window.BondCalculatorApp.updateSelectedCount(category),
+          0
+        );
+      }
+
+      setTimeout(adjustIndicatorSize, 50);
+    }
+
+    function adjustIndicatorSize() {
+      if (isAdjusting) return;
+      isAdjusting = true;
+
+      const imgBoxes = document.querySelectorAll(".img-box");
+      let pendingImages = 0;
+
+      imgBoxes.forEach((box) => {
+        const img = box.querySelector("img");
+        const indicator = box.querySelector(".level25-indicator");
+
+        if (img && indicator) {
+          if (img.complete) {
+            updateIndicator(img, indicator);
+          } else {
+            pendingImages++;
+            img.onload = function () {
+              updateIndicator(img, indicator);
+              pendingImages--;
+              if (pendingImages === 0) {
+                isAdjusting = false;
+              }
+            };
+          }
+        }
+      });
+
+      if (pendingImages === 0) {
+        isAdjusting = false;
+      }
+
+      function updateIndicator(img, indicator) {
+        const imgWidth = img.offsetWidth;
+        const indicatorSize = Math.max(
+          10,
+          Math.min(Math.round(imgWidth * 0.08), 20)
+        );
+        const fontSize = Math.max(6, Math.round(indicatorSize * 0.6));
+
+        indicator.style.width = indicatorSize + "px";
+        indicator.style.height = indicatorSize + "px";
+
+        const span = indicator.querySelector("span");
+        if (span) {
+          span.style.fontSize = fontSize + "px";
+        }
+
+        const margin = Math.max(3, Math.min(Math.round(imgWidth * 0.02), 6));
+        indicator.style.right = margin + "px";
+        indicator.style.bottom = margin + "px";
+
+        indicator.style.opacity = "1";
+      }
+    }
+
+    function displayAllPets(category, container) {
+      container.className = "image-container-grid";
+
+      const itemsInCategory = window.DataManager.getData(category);
+      if (
+        !itemsInCategory ||
+        !Array.isArray(itemsInCategory) ||
+        itemsInCategory.length === 0
+      ) {
+        container.innerHTML = `<p>표시할 ${category} 환수 정보가 없습니다.</p>`;
+        return;
+      }
+
+      itemsInCategory.forEach((item) => {
+        if (!item || !item.image || !item.name) return;
+
+        const imgWrapper = createImageWrapper(item, category);
+        container.appendChild(imgWrapper);
+      });
+
+      if (
+        selectionMode &&
+        window.BondCalculatorApp &&
+        typeof window.BondCalculatorApp.applySelectedState === "function"
+      ) {
+        setTimeout(() => window.BondCalculatorApp.applySelectedState(), 50);
+      }
+    }
+
+    function displayPetsByInfluence(category, container) {
+      container.className = "image-container-grouped";
+
+      const firstRowInfluences = ["결의", "고요", "의지"];
+      const secondRowInfluences = ["침착", "냉정", "활력"];
+
+      const itemsInCategory = window.DataManager.getData(category);
+      if (
+        !itemsInCategory ||
+        !Array.isArray(itemsInCategory) ||
+        itemsInCategory.length === 0
+      ) {
+        container.innerHTML = `<p>표시할 ${category} 환수 정보가 없습니다.</p>`;
+        return;
+      }
+
+      const firstRow = document.createElement("div");
+      firstRow.className = "influence-row";
+      let firstRowHasContent = false;
+
+      firstRowInfluences.forEach((influence) => {
+        const groupWrapper = createInfluenceGroup(
+          category,
+          influence,
+          itemsInCategory
+        );
+        if (groupWrapper) {
+          firstRow.appendChild(groupWrapper);
+          firstRowHasContent = true;
+        }
+      });
+
+      if (firstRowHasContent) container.appendChild(firstRow);
+
+      const secondRow = document.createElement("div");
+      secondRow.className = "influence-row";
+      let secondRowHasContent = false;
+
+      secondRowInfluences.forEach((influence) => {
+        const groupWrapper = createInfluenceGroup(
+          category,
+          influence,
+          itemsInCategory
+        );
+        if (groupWrapper) {
+          secondRow.appendChild(groupWrapper);
+          secondRowHasContent = true;
+        }
+      });
+
+      if (secondRowHasContent) container.appendChild(secondRow);
+
+      if (
+        !firstRowHasContent &&
+        !secondRowHasContent &&
+        itemsInCategory.length > 0
+      ) {
+        container.innerHTML = `<p>알려진 세력에 속하지 않는 ${category} 환수가 있습니다.</p>`;
+      } else if (!firstRowHasContent && !secondRowHasContent) {
+        container.innerHTML = `<p>표시할 ${category} 환수 정보가 없습니다.</p>`;
+      }
+
+      if (
+        selectionMode &&
+        window.BondCalculatorApp &&
+        typeof window.BondCalculatorApp.applySelectedState === "function"
+      ) {
+        setTimeout(() => window.BondCalculatorApp.applySelectedState(), 100);
+      }
+    }
+
+    function createInfluenceGroup(category, influence, itemsInCategory) {
+      if (!window.DataManager.FACTION_ICONS) {
+        console.error("FACTION_ICONS is not available!");
+        return null;
+      }
+
+      const itemsForInfluence = itemsInCategory.filter(
+        (item) => item && item.influence === influence
+      );
+
+      if (itemsForInfluence.length === 0) {
+        return null;
+      }
+
+      const groupWrapper = document.createElement("div");
+      groupWrapper.className = "influence-group";
+
+      const headerWrapper = document.createElement("div");
+      headerWrapper.className = "header-wrapper";
+
+      const influenceIcon = document.createElement("img");
+      const iconSrc = window.DataManager.FACTION_ICONS[influence];
+      if (iconSrc) {
+        influenceIcon.src = iconSrc;
+        influenceIcon.alt = `${influence} 아이콘`;
+        influenceIcon.className = "influence-icon";
+        headerWrapper.appendChild(influenceIcon);
+      } else {
+        console.warn(`Icon not found for influence: ${influence}.`);
+      }
+
+      const header = document.createElement("h3");
+      header.className = "influence-header";
+      header.textContent = influence;
+      const countSpan = document.createElement("span");
+      countSpan.className = "influence-count";
+      countSpan.textContent = ` (${itemsForInfluence.length})`;
+      header.appendChild(countSpan);
+      headerWrapper.appendChild(header);
+      groupWrapper.appendChild(headerWrapper);
+
+      const itemsWrapper = document.createElement("div");
+      itemsWrapper.className = "influence-items";
+
+      itemsForInfluence.forEach((item) => {
+        if (!item || !item.image || !item.name) return;
+
+        const imgWrapper = createImageWrapper(item, category);
+        itemsWrapper.appendChild(imgWrapper);
+      });
+
+      groupWrapper.appendChild(itemsWrapper);
+      return groupWrapper;
+    }
+
+    function createImageWrapper(item, category) {
+      const imgWrapper = document.createElement("div");
+      imgWrapper.className = "img-wrapper";
+
+      const imgBox = document.createElement("div");
+      imgBox.className = "img-box";
+      imgWrapper.appendChild(imgBox);
+
+      const { hasFullRegistration, hasFullBind } =
+        window.DataManager.checkSpiritStats(item);
+      if (hasFullRegistration) {
+        const ribbonLeft = document.createElement("div");
+        ribbonLeft.className = "ribbon-left";
+        ribbonLeft.innerHTML = "<span>R</span>";
+        ribbonLeft.title = "등록 효과 전체 보유";
+        imgBox.appendChild(ribbonLeft);
+      }
+
+      if (hasFullBind) {
+        const ribbonRight = document.createElement("div");
+        ribbonRight.className = "ribbon-right";
+        ribbonRight.innerHTML = "<span>B</span>";
+        ribbonRight.title = "결속 효과 전체 보유";
+        imgBox.appendChild(ribbonRight);
+      }
+
+      const img = document.createElement("img");
+      img.src = item.image;
+      img.alt = item.name;
+      img.title = item.name;
+      img.loading = "lazy";
+      img.dataset.category = category;
+      img.dataset.image = item.image;
+      img.dataset.influence = item.influence || "";
+
+      imgBox.appendChild(img);
+
+      if (window.DataManager.hasLevel25BindStats(item)) {
+        const level25Indicator = document.createElement("div");
+        level25Indicator.className = "level25-indicator";
+        level25Indicator.innerHTML = "<span>25</span>";
+        level25Indicator.title = "25레벨 결속 효과 보유";
+        level25Indicator.style.opacity = "0";
+        imgBox.appendChild(level25Indicator);
+      }
+
+      if (selectionMode && selectionCallback) {
+        imgBox.addEventListener("click", function () {
+          selectionCallback(item, category);
+        });
+        imgBox.style.cursor = "pointer";
+      } else {
+        imgBox.addEventListener("click", function () {
+          if (window.ModalHandler) {
+            window.ModalHandler.showInfo(category, item.image, item.influence);
+          }
+        });
+        imgBox.style.cursor = "pointer";
+      }
+
+      const nameLabel = document.createElement("small");
+      nameLabel.className = "img-name";
+      nameLabel.textContent = item.name;
+      imgWrapper.appendChild(nameLabel);
+
+      return imgWrapper;
+    }
+
+    function setSelectionMode(isEnabled, callback) {
+      selectionMode = isEnabled === true;
+      selectionCallback = typeof callback === "function" ? callback : null;
+      showCategory(currentCategory, {
+        selectMode: selectionMode,
+        onSelect: selectionCallback,
+      });
+      return selectionMode;
+    }
+
+    function getCurrentCategory() {
+      return currentCategory;
+    }
+
+    return {
+      initUIEvents,
+      showCategory,
+      displayAllPets,
+      displayPetsByInfluence,
+      createInfluenceGroup,
+      setSelectionMode,
+      getCurrentCategory,
+      adjustIndicatorSize,
+    };
+  })();

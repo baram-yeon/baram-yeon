@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#1a2a3a">
+    <title>바연화연 - 착 계산</title>
+    <meta name="description" content="바람의나라: 연 환수정보, 환수 결속, 환수혼 계산기 등 게임 관련 도구 모음">
+
+    <link rel="icon" type="image/png" href="assets/img/BHY.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/img/BHY.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/img/BHY.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/img/BHY.png">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="assets/css/global.css" rel="stylesheet">
+    <link href="assets/css/chak.css" rel="stylesheet">
+    <link href="assets/css/components/ads.css" rel="stylesheet">
+    <link href="assets/css/components/footer.css" rel="stylesheet">
+    <link href="assets/css/components/header.css" rel="stylesheet">
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js?v=1746712568"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js?v=1746712568"></script>
+</head>
+
+<body>
+    <header class="header">
+        <div class="logo-container">
+            <a href="info.html">
+                <img src="assets/img/BHY.png" alt="바연화연 로고" class="logo">
+            </a>
+        </div>
+        <nav class="tabs">
+            <div class="tab" onclick="location.assign('info.html')">환수정보</div>
+            <div class="tab" onclick="location.assign('bondCalculator.html')">환수 결속</div>
+            <div class="tab" onclick="location.assign('soulCalculator.html')">환수혼 계산</div>
+            <div class="tab active" onclick="location.assign('chak.html')">착 계산</div>
+        </nav>
+    </header>
+
+    <div class="ad-row">
+        <div class="ad-container-left">
+            <ins class="kakao_ad_area" style="display:none;" data-ad-unit="DAN-XTAnZwWzQOT46c36" data-ad-width="728"
+                data-ad-height="90"></ins>
+        </div>
+
+        <div class="ad-container-right">
+            <ins class="kakao_ad_area" style="display:none;" data-ad-unit="DAN-l6ShIzRdMfSOcB8v" data-ad-width="728"
+                data-ad-height="90"></ins>
+        </div>
+    </div>
+
+    <div class="ad-container mobile-ad">
+        <ins class="kakao_ad_area" style="display:none;" data-ad-unit="DAN-UDsuae5QVIAxX2fS" data-ad-width="320"
+            data-ad-height="50"></ins>
+    </div>
+
+    <div class="layout-container">
+        <div class="equipment-section">
+            <div class="panel equipment-panel">
+                <h3>장비 부위</h3>
+                <div id="equipment-selector" class="button-grid"></div>
+            </div>
+        </div>
+
+        <div class="level-info-section">
+            <div class="panel level-panel">
+                <h3>강화 레벨</h3>
+                <div id="level-selector" class="level-buttons"></div>
+            </div>
+            <div class="panel enhancement-panel">
+                <h3>능력치 정보</h3>
+                <div id="stats-display" class="stats-grid"></div>
+            </div>
+        </div>
+
+        <div class="panel summary-panel">
+            <div class="tool-section">
+                <div class="preset-section">
+                    <button onclick="ChakApp.optimizeStats('boss')" class="preset-btn boss-btn">보스용 조합</button>
+                    <button onclick="ChakApp.optimizeStats('pvp')" class="preset-btn pvp-btn">피빕용 조합</button>
+                </div>
+                <div class="search-section">
+                    <div class="search-input-container">
+                        <input id="search-input" placeholder="능력치 검색..." class="search-input">
+                        <button id="search-button" class="search-btn">검색</button>
+                    </div>
+                    <div class="dropdown-container">
+                        <div id="stat-options" class="stat-options"></div>
+                    </div>
+                    <div class="selected-stats" id="selected-stats"></div>
+                </div>
+            </div>
+
+            <h3>능력치 합계</h3>
+            <div class="resources-section">
+                <label class="resource-label">보유 수량</label>
+                <div class="resource-inputs">
+                    <div class="resource-input">
+                        <img src="assets/img/gold-button.jpg" alt="황금단추" class="resource-icon-img">
+                        <input type="number" id="gold-button" value="10000">
+                    </div>
+                    <div class="resource-input">
+                        <img src="assets/img/fivecolored-beads.jpg" alt="오색구슬" class="resource-icon-img">
+                        <input type="number" id="color-ball" value="10000">
+                    </div>
+                </div>
+                <div class="resource-status">
+                    <div id="resource-summary"></div>
+                </div>
+            </div>
+            <div id="summary-display" class="summary-box"></div>
+        </div>
+    </div>
+
+    <div id="search-results-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>검색 결과</h3>
+                <span class="close-modal" onclick="ChakApp.closeSearchResults()">&times;</span>
+            </div>
+            <div class="search-results-container">
+                <div class="search-results-wrapper">
+                    <div class="summary-title">검색된 능력치</div>
+                    <div class="summary-stats" id="search-summary-stats"></div>
+                    <div class="resource-requirement">
+                        <div class="resource-req-title">필요 자원:</div>
+                        <div class="resource-req-items" id="search-resource-requirement"></div>
+                    </div>
+                    <div class="searched-stats-list" id="searched-stats-list"></div>
+                </div>
+                <div class="search-results" id="search-results"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="optimize-results-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="optimize-title">최적 조합</h3>
+                <span class="close-modal" onclick="ChakApp.closeOptimizeResults()">&times;</span>
+            </div>
+            <div class="optimize-container">
+                <div id="optimize-description" class="optimize-description"></div>
+                <div class="optimize-results-container">
+                    <div id="optimize-results" class="optimize-results"></div>
+                </div>
+            </div>
+            <div class="optimize-buttons">
+                <button onclick="ChakApp.closeOptimizeResults()" class="apply-btn">창 닫기</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="tutorial-tip" class="tutorial-tip">
+        <div class="tip-content">
+            <h4>착 계산기 사용법</h4>
+            <p>1. 왼쪽에서 장비 부위를 선택하세요</p>
+            <p>2. 강화 레벨을 선택하세요</p>
+            <p>3. 능력치를 개방하고 강화하세요</p>
+            <button id="close-tip" class="close-tip-btn">확인</button>
+        </div>
+    </div>
+
+    <div class="ad-row">
+        <div class="ad-container-left">
+            <ins class="kakao_ad_area" style="display:none;" data-ad-unit="DAN-3TYDe2ScVF7pn7fU" data-ad-width="728"
+                data-ad-height="90"></ins>
+        </div>
+
+        <div class="ad-container-right">
+            <ins class="kakao_ad_area" style="display:none;" data-ad-unit="DAN-Sxen5zACA7yhBeet" data-ad-width="728"
+                data-ad-height="90"></ins>
+        </div>
+    </div>
+
+    <div class="ad-container mobile-ad">
+        <ins class="kakao_ad_area" style="display:none;" data-ad-unit="DAN-Xtg9TanJcnXcaIaY" data-ad-width="320"
+            data-ad-height="50"></ins>
+    </div>
+
+    <footer class="site-footer">
+        <div class="footer-desktop">
+            <div class="footer-links">
+                <a href="info.html">환수정보</a>
+                <a href="bondCalculator.html">환수 결속</a>
+                <a href="soulCalculator.html">환수혼 계산</a>
+                <a href="chak.html">착 계산</a>
+                <button class="footer-report-btn" onclick="openReportSheet()">제보하기</button>
+            </div>
+        </div>
+        <div class="footer-copyright">
+            <p>&copy; 2025 바연 화연 | <a href="https://baramy.nexon.com/" target="_blank">바람의나라:연</a>과 공식 관련 없음</p>
+        </div>
+    </footer>
+    <script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js?v=1746712568" async></script>
+    <script src="assets/js/common.js?v=1746712568"></script>
+    <script src="assets/js/firebaseConfig.js?v=1746712568"></script>
+    <script src="assets/js/chak.js?v=1746712568"></script>
+    <script src="assets/js/chakInit.js?v=1746712568"></script>
+</body>
+
+</html>

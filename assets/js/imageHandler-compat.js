@@ -1,1 +1,40 @@
-window.ImageHandler={loadCategoryData:function(){return window.DataManager.loadCategoryData()},initUIEvents:function(){return window.UIRenderer.initUIEvents()},showCategory:function(e){return window.UIRenderer.showCategory(e)},displayAllPets:function(e,n){return window.UIRenderer.displayAllPets(e,n)},displayPetsByInfluence:function(e,n){return window.UIRenderer.displayPetsByInfluence(e,n)},createInfluenceGroup:function(e,n,t){return window.UIRenderer.createInfluenceGroup(e,n,t)},checkSpiritStats:function(e){return window.DataManager.checkSpiritStats(e)},checkAllLevelsHaveEffect:function(e,n){return window.DataManager.checkAllLevelsHaveEffect(e,n)},hasLevel25BindStats:function(e){return window.DataManager.hasLevel25BindStats(e)},showInfo:function(e,n,t){if(window.ModalHandler)return window.ModalHandler.showInfo(e,n,t)}};
+window.ImageHandler = (function () {
+  return {
+    loadCategoryData: function () {
+      return window.DataManager.loadCategoryData();
+    },
+    initUIEvents: function () {
+      return window.UIRenderer.initUIEvents();
+    },
+    showCategory: function (category) {
+      return window.UIRenderer.showCategory(category);
+    },
+    displayAllPets: function (category, container) {
+      return window.UIRenderer.displayAllPets(category, container);
+    },
+    displayPetsByInfluence: function (category, container) {
+      return window.UIRenderer.displayPetsByInfluence(category, container);
+    },
+    createInfluenceGroup: function (category, influence, itemsInCategory) {
+      return window.UIRenderer.createInfluenceGroup(
+        category,
+        influence,
+        itemsInCategory
+      );
+    },
+    checkSpiritStats: function (spirit) {
+      return window.DataManager.checkSpiritStats(spirit);
+    },
+    checkAllLevelsHaveEffect: function (stats, effectType) {
+      return window.DataManager.checkAllLevelsHaveEffect(stats, effectType);
+    },
+    hasLevel25BindStats: function (item) {
+      return window.DataManager.hasLevel25BindStats(item);
+    },
+    showInfo: function (category, imagePath, influence) {
+      if (window.ModalHandler) {
+        return window.ModalHandler.showInfo(category, imagePath, influence);
+      }
+    },
+  };
+})();
