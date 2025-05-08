@@ -1,0 +1,81 @@
+.ad-container {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 15px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+}
+
+.ad-row {
+    display: flex;
+    justify-content: space-between;
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 10px 5px;
+}
+
+.ad-container-left,
+.ad-container-right {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 90px;
+    width: 49%;
+    overflow: hidden;
+}
+
+.mobile-ad {
+    min-height: 50px;
+    width: 100%;
+    text-align: center;
+}
+
+@media screen and (min-width: 769px) {
+    .mobile-ad {
+        display: none !important;
+    }
+
+    .ad-row {
+        display: flex;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .ad-row {
+        display: none !important;
+    }
+
+    .ad-container-left,
+    .ad-container-right {
+        display: none !important;
+    }
+
+    .desktop-ad {
+        display: none !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .ad-container {
+        padding: 0 8px;
+    }
+}
+
+.modal .ad-container-left,
+.modal .ad-container-right,
+.modal .mobile-ad {
+    width: 100%;
+    margin: 10px auto;
+    text-align: center;
+}
+
+.modal .kakao_ad_area {
+    min-height: 50px;
+}
+
+.kakao_ad_area {
+    min-height: 30px;
+}
