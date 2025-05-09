@@ -17,7 +17,6 @@ body {
     box-sizing: border-box;
 }
 
-
 .tab {
     padding: 14px 22px;
     margin: 0 10px;
@@ -139,68 +138,6 @@ body {
 
 .sub-tabs .tab.active:after {
     display: block;
-}
-
-@media (max-width: 768px) {
-
-
-    .tab {
-        margin: 0 3px;
-        padding: 10px 8px;
-        font-size: 13px;
-        min-width: auto;
-        flex: 1;
-        letter-spacing: 0;
-    }
-
-    .sub-tabs {
-        top: 46px;
-        padding: 3px 0;
-    }
-
-    .sub-tabs .tab {
-        padding: 5px 10px;
-        font-size: 11px;
-        min-width: auto;
-        margin: 0 2px;
-    }
-}
-
-@media (max-width: 480px) {
-
-
-    .tab {
-        margin: 0 2px;
-        padding: 8px 5px;
-        font-size: 11px;
-        min-width: auto;
-        flex: 1;
-        letter-spacing: 0;
-        border-radius: 6px;
-    }
-
-    .sub-tabs {
-        flex-wrap: wrap;
-        gap: 2px;
-        padding: 3px 0;
-        top: 41px;
-    }
-
-    .sub-tabs .tab {
-        padding: 4px 5px;
-        font-size: 9px;
-        min-width: auto;
-        flex: 1;
-        border-radius: 0 0 8px 8px;
-        margin: 0 1px;
-    }
-
-    .sub-tabs .tab:after {
-        bottom: -4px;
-        border-left: 4px solid transparent;
-        border-right: 4px solid transparent;
-        border-top: 4px solid #1976d2;
-    }
 }
 
 .help-container {
@@ -349,5 +286,156 @@ body {
 
     100% {
         opacity: 0.6;
+    }
+}
+
+@media (max-width: 768px) {
+    .tab {
+        margin: 0 3px;
+        padding: 10px 8px;
+        font-size: 13px;
+        min-width: auto;
+        flex: 1;
+        letter-spacing: 0;
+    }
+
+    .sub-tabs {
+        top: 46px;
+        padding: 3px 0;
+    }
+
+    .sub-tabs .tab {
+        padding: 5px 10px;
+        font-size: 11px;
+        min-width: auto;
+        margin: 0 2px;
+    }
+}
+
+@media (max-width: 480px) {
+    .tab {
+        margin: 0 2px;
+        padding: 8px 5px;
+        font-size: 11px;
+        min-width: auto;
+        flex: 1;
+        letter-spacing: 0;
+        border-radius: 6px;
+    }
+
+    .sub-tabs {
+        flex-wrap: wrap;
+        gap: 2px;
+        padding: 3px 0;
+        top: 41px;
+    }
+
+    .sub-tabs .tab {
+        padding: 4px 5px;
+        font-size: 9px;
+        min-width: auto;
+        flex: 1;
+        border-radius: 0 0 8px 8px;
+        margin: 0 1px;
+    }
+
+    .sub-tabs .tab:after {
+        bottom: -4px;
+        border-left: 4px solid transparent;
+        border-right: 4px solid transparent;
+        border-top: 4px solid #1976d2;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .modal-header {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .modal-img-preview {
+        width: 60px;
+        height: 60px;
+    }
+
+    .title-area {
+        width: 100%;
+        align-items: center;
+    }
+
+    .modal h3 {
+        font-size: 16px;
+        justify-content: center;
+    }
+
+    .modal h3 .influence-icon {
+        width: 20px;
+        height: 20px;
+    }
+
+    .stats-container {
+        gap: 10px;
+    }
+
+    .report-container {
+        display: block;
+        text-align: center;
+        margin: 20px 0;
+        padding: 0 15px;
+    }
+
+    .report-btn {
+        padding: 10px 20px;
+        font-size: 15px;
+        min-width: 160px;
+    }
+
+    .report-icon {
+        font-size: 16px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .modal h3 {
+        font-size: 15px;
+    }
+
+    .modal h3 .influence-icon {
+        width: 18px;
+        height: 18px;
+    }
+
+    .level-controls button {
+        width: 28px;
+        height: 28px;
+        font-size: 16px;
+    }
+
+    .level-input {
+        font-size: 14px;
+        width: 35px;
+    }
+
+    .max-button {
+        font-size: 12px !important;
+        padding: 0 8px !important;
+    }
+
+    #registrationList li,
+    #bindList li {
+        font-size: 11px;
+        padding: 6px 8px;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    .report-btn {
+        background: linear-gradient(135deg, #5d7ff7, #3a5ce6);
+        box-shadow: 0 4px 10px rgba(74, 108, 247, 0.4);
+    }
+
+    .report-btn:hover {
+        background: linear-gradient(135deg, #4a6cf7, #2a4cd6);
     }
 }

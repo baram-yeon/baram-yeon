@@ -8,7 +8,6 @@ const BondCalculatorApp = (function () {
   const factionSetEffects = window.CommonData.FACTION_SET_EFFECTS || {};
 
   let selectedSpirits = [];
-
   let isCalculationCancelled = false;
   let isModalOpen = false;
   let savedOptimalCombinations = { 수호: [], 탑승: [], 변신: [] };
@@ -18,6 +17,7 @@ const BondCalculatorApp = (function () {
   let selectedSearchStats = [];
   let lastActiveCategory = "수호";
   let currentScrollY = 0;
+  let isProcessing = false;
 
   const categoryState = {
     수호: { activeIndex: -1 },
@@ -127,7 +127,6 @@ const BondCalculatorApp = (function () {
 
     if (prevCategory !== category) {
       updateSelectedCount(category);
-
       document.querySelectorAll("img.selected").forEach((img) => {
         img.classList.remove("selected");
       });
@@ -138,7 +137,6 @@ const BondCalculatorApp = (function () {
         selectMode: true,
         onSelect: handleSpiritSelection,
       });
-
       applySelectedState();
     } else {
       console.error("UIRenderer is not available!");
@@ -205,14 +203,11 @@ const BondCalculatorApp = (function () {
 
   function applySelectedState() {
     const currentCategory = lastActiveCategory;
-
     const currentCategorySelections = selectedSpirits.filter(
       (spirit) => spirit.category === currentCategory
     );
 
-    const allWrappers = document.querySelectorAll("img.selected");
-
-    allWrappers.forEach((wrapper) => {
+    document.querySelectorAll("img.selected").forEach((wrapper) => {
       wrapper.classList.remove("selected");
     });
 
@@ -231,9 +226,7 @@ const BondCalculatorApp = (function () {
         const imageFilename = imagePath.split("/").pop();
 
         if (src === spirit.image || srcFilename === imageFilename) {
-          if (img) {
-            img.classList.add("selected");
-          }
+          img.classList.add("selected");
         }
       });
     });
@@ -241,7 +234,6 @@ const BondCalculatorApp = (function () {
 
   function updateSelectedSpiritsPanel(forceCategory = null) {
     const currentCategory = forceCategory || lastActiveCategory;
-
     const containerSelectors = [
       "#selectedSpirits",
       "#panelToggleContainer .selected-spirits",
@@ -317,7 +309,6 @@ const BondCalculatorApp = (function () {
   function updateMobilePanel() {
     const toggleContainer = document.getElementById("panelToggleContainer");
     if (!toggleContainer) {
-      console.warn("Panel toggle container not found");
       return;
     }
 
@@ -329,7 +320,6 @@ const BondCalculatorApp = (function () {
     if (screen.width <= 768 || window.innerWidth <= 768) {
       if (categorySpirits.length > 0) {
         toggleContainer.style.display = "flex";
-
         const mobileCountElement = document.getElementById(
           "mobileSelectedCount"
         );
@@ -342,17 +332,12 @@ const BondCalculatorApp = (function () {
     } else {
       toggleContainer.style.display = "none";
     }
-
-    // console.log(
-    //   `Mobile panel update: width=${window.innerWidth}, screen=${screen.width}, spirits=${categorySpirits.length}`
-    // );
   }
 
   function updateSelectedCount(forceCategory = null) {
     const currentCategory = forceCategory || lastActiveCategory;
 
     if (!currentCategory) {
-      console.warn("No active category for count update");
       return;
     }
 
@@ -818,7 +803,7 @@ const BondCalculatorApp = (function () {
     }
 
     const currentCategory = lastActiveCategory;
-    selectedSpirits.forEach((spirit, index) => {
+    selectedSpirits.forEach((spirit) => {
       if (!spirit.isFixedLevel && spirit.category === currentCategory) {
         spirit.level = level;
       }
@@ -845,7 +830,6 @@ const BondCalculatorApp = (function () {
 
   function saveSelectedSpiritsToStorage() {
     localStorage.setItem("selectedSpirits", JSON.stringify(selectedSpirits));
-
     updateMobilePanel();
   }
 
@@ -951,7 +935,6 @@ const BondCalculatorApp = (function () {
       }
 
       let bindLevelStats = null;
-
       bindLevelStats = spirit.stats?.find(
         (s) => s.level === spirit.level
       )?.bindStat;
@@ -1049,9 +1032,7 @@ const BondCalculatorApp = (function () {
 
     for (const category in categoryGradeCount) {
       const categoryEffects = gradeSetEffects[category];
-      if (!categoryEffects) {
-        continue;
-      }
+      if (!categoryEffects) continue;
 
       const grades = categoryGradeCount[category];
       for (const grade in grades) {
@@ -1059,9 +1040,7 @@ const BondCalculatorApp = (function () {
         if (count < 2) continue;
 
         const gradeEffects = categoryEffects[grade];
-        if (!gradeEffects) {
-          continue;
-        }
+        if (!gradeEffects) continue;
 
         let highestStep = 0;
         for (let step = 2; step <= Math.min(6, count); step++) {
@@ -1542,7 +1521,6 @@ const BondCalculatorApp = (function () {
       </div>
 
       <div class="results-container">
-        <!-- Only create empty container divs - remove headers and placeholder content -->
         <div class="results-section">
           <div id="optimalGradeEffects" class="effects-list"></div>
         </div>
@@ -1552,7 +1530,6 @@ const BondCalculatorApp = (function () {
         <div class="results-section">
           <div id="optimalBindEffects" class="effects-list"></div>
         </div>
-
       </div>
 
       <div id="optimalSpiritsDetails" class="spirit-details-container">
@@ -1842,12 +1819,8 @@ const BondCalculatorApp = (function () {
         }
 
         if (validSpirits.length <= 20) {
-          // console.log(`환수 ${validSpirits.length}개: 완전 탐색 방식(A) 사용`);
           runMethodA(validSpirits);
         } else {
-          // console.log(
-          //   `환수 ${validSpirits.length}개: 스마트 필터링 방식(B) 사용`
-          // );
           runMethodB(validSpirits);
         }
       } catch (error) {
@@ -2322,9 +2295,6 @@ const BondCalculatorApp = (function () {
   }
 
   function optimizeWithSmartFiltering(rankedSpirits) {
-    // console.log("=== 스마트 필터링 시작 ===");
-    // console.log(`총 환수 수: ${rankedSpirits.length}개`);
-
     const totalSpirits = rankedSpirits.length;
     let bestResultOverall = null;
     let processedResultCount = 0;
@@ -2332,14 +2302,12 @@ const BondCalculatorApp = (function () {
     updateCalculationPhase(0);
 
     const topRankedSpirits = rankedSpirits.slice(0, Math.min(25, totalSpirits));
-    // console.log(`상위 점수 환수: ${topRankedSpirits.length}개 선택됨`);
 
     const pvpSpirits = rankedSpirits
       .filter((spirit) =>
         hasCriticalStat(spirit, ["pvpDamagePercent", "pvpDefensePercent"])
       )
       .slice(0, 15);
-    // console.log(`대피/대방% 환수: ${pvpSpirits.length}개`);
 
     const resistanceSpirits = rankedSpirits
       .filter(
@@ -2351,7 +2319,6 @@ const BondCalculatorApp = (function () {
           !hasCriticalStat(spirit, ["pvpDamagePercent", "pvpDefensePercent"])
       )
       .slice(0, 15);
-    // console.log(`피저/피저관 환수: ${resistanceSpirits.length}개`);
 
     const otherSpirits = rankedSpirits
       .filter(
@@ -2363,12 +2330,10 @@ const BondCalculatorApp = (function () {
           ])
       )
       .slice(0, 15);
-    // console.log(`기타 환수: ${otherSpirits.length}개`);
 
     const mixedSpirits = [
       ...new Set([...pvpSpirits, ...resistanceSpirits, ...otherSpirits]),
     ];
-    // console.log(`균형 그룹 환수: ${mixedSpirits.length}개 (중복 제거)`);
 
     const workerBlob = new Blob([getWorkerCode()], {
       type: "application/javascript",
@@ -2421,18 +2386,13 @@ const BondCalculatorApp = (function () {
 
         if (statusText) {
           const percentage = Math.round(progress * 100);
-          // 캐릭터 움직임 업데이트 함수 호출
           updateProgressWithCharacter(progress);
           statusText.textContent = `${currentPhaseName} 분석 중 (${percentage}%)`;
         }
 
         processedResultCount += processedCount || 0;
       } else if (type === "result") {
-        // console.log(`=== ${phases[currentPhase - 1].name} 분석 완료 ===`);
-
         if (Array.isArray(results) && results.length > 0) {
-          // console.log(`- 분석된 조합 수: ${results.length}`);
-
           let bestPhaseResult = results[0];
           for (let i = 1; i < results.length; i++) {
             if (results[i].scoreWithBind > bestPhaseResult.scoreWithBind) {
@@ -2443,18 +2403,10 @@ const BondCalculatorApp = (function () {
           bestPhaseResult.phaseName = phases[currentPhase - 1].name;
           bestPhaseResult.phaseId = phases[currentPhase - 1].phaseId;
 
-          // console.log(
-          //   `- 현재 단계 최고 점수: ${bestPhaseResult.scoreWithBind}`
-          // );
-          // console.log(`- 환수 구성: ${bestPhaseResult.spirits.length}개`);
-
           if (
             !bestResultOverall ||
             bestPhaseResult.scoreWithBind > bestResultOverall.scoreWithBind
           ) {
-            // console.log(
-            //   `- 새 최적 조합 발견! 점수: ${bestPhaseResult.scoreWithBind}`
-            // );
             bestResultOverall = bestPhaseResult;
             document.getElementById("optimalScore").textContent = `${
               bestPhaseResult.scoreWithBind
@@ -2466,8 +2418,6 @@ const BondCalculatorApp = (function () {
               bindScoreEl.style.display = "none";
             }
           }
-        } else {
-          // console.log(`- 결과 없음`);
         }
 
         currentPhase++;
@@ -2475,11 +2425,6 @@ const BondCalculatorApp = (function () {
 
         if (currentPhase <= phases.length && !isCalculationCancelled) {
           const phaseIndex = currentPhase - 1;
-          // console.log(
-          //   `\n=== ${phases[phaseIndex].name} 분석 시작 (phase ${currentPhase}) ===`
-          // );
-          // console.log(`- 환수 수: ${phases[phaseIndex].spirits.length}`);
-          // console.log(`- 최대 조합 크기: ${phases[phaseIndex].maxSize}`);
 
           worker.postMessage({
             spirits: phases[phaseIndex].spirits,
@@ -2492,10 +2437,6 @@ const BondCalculatorApp = (function () {
       }
     };
 
-    // console.log(`=== ${phases[0].name} 분석 시작 (phase 1) ===`);
-    // console.log(`- 환수 수: ${phases[0].spirits.length}개`);
-    // console.log(`- 최대 조합 크기: ${phases[0].maxSize}`);
-
     worker.postMessage({
       spirits: phases[0].spirits,
       maxCombinationSize: phases[0].maxSize,
@@ -2505,7 +2446,6 @@ const BondCalculatorApp = (function () {
     function finishCalculation() {
       worker.terminate();
       URL.revokeObjectURL(workerUrl);
-      // console.log("웹 워커 종료됨");
 
       updateCalculationPhase(4);
 
@@ -2517,15 +2457,6 @@ const BondCalculatorApp = (function () {
       }
 
       if (bestResultOverall) {
-        // console.log("\n=== 최종 결과 ===");
-        // console.log(`- 최종 점수: ${bestResultOverall.scoreWithBind}`);
-        // console.log(`- 최적 환수 수: ${bestResultOverall.spirits.length}개`);
-        // console.log(
-        //   `- 선택된 환수: ${bestResultOverall.spirits
-        //     .map((s) => s.name)
-        //     .join(", ")}`
-        // );
-
         const deepCopiedResult = JSON.parse(JSON.stringify(bestResultOverall));
         addNewOptimalCombination(deepCopiedResult);
         saveSavedOptimalCombinations();
@@ -2536,43 +2467,31 @@ const BondCalculatorApp = (function () {
         renderHistoryTabs(category);
         showSingleOptimalResult(bestResultOverall);
       } else {
-        // console.log("=== 최적 조합을 찾을 수 없음 ===");
         document.getElementById("optimalSpiritsList").innerHTML =
           "<div class='warning-message'>최적 조합을 찾을 수 없습니다.</div>";
       }
 
-      // console.log("=== 스마트 필터링 종료 ===");
       isProcessing = false;
     }
   }
 
   function optimizeWithoutWorkerSmartFiltering(rankedSpirits) {
-    // console.log("=== 스마트 필터링 시작 (워커 미지원) ===");
-    // console.log(`총 환수 수: ${rankedSpirits.length}개`);
-
     const totalSpirits = rankedSpirits.length;
     let bestResult = null;
 
     const topSpirits = rankedSpirits.slice(0, Math.min(15, totalSpirits));
-    // console.log(`상위 점수 환수: ${topSpirits.length}개 선택됨`);
 
     document.getElementById("calculation-status").textContent =
       "웹 워커를 지원하지 않습니다. 상위 환수만 계산합니다...";
 
     setTimeout(() => {
-      // console.log("조합 생성 시작");
       const targetSize = Math.min(6, topSpirits.length);
       const combinations = generateCombinations(topSpirits, targetSize);
-      // console.log(`생성된 조합 수: ${combinations.length}개`);
 
-      // console.log("조합 분석 시작");
       combinations.forEach((combination, index) => {
         const result = calculateEffectsForSpirits(combination);
 
         if (!bestResult || result.scoreWithBind > bestResult.scoreWithBind) {
-          // console.log(
-          //   `새 최적 조합 발견: 점수 ${result.scoreWithBind} (환수 ${combination.length}개)`
-          // );
           bestResult = result;
         }
 
@@ -2584,27 +2503,10 @@ const BondCalculatorApp = (function () {
           if (progressBar) {
             progressBar.style.width = `${Math.round(progress)}%`;
           }
-
-          if (index % 500 === 0) {
-            // console.log(
-            //   `분석 진행 중: ${Math.round(progress)}% 완료 (${index}/${
-            //     combinations.length
-            //   })`
-            // );
-          }
         }
       });
 
-      // console.log("조합 분석 완료");
-
       if (bestResult) {
-        // console.log("\n=== 최종 결과 ===");
-        // console.log(`- 최종 점수: ${bestResult.scoreWithBind}`);
-        // console.log(`- 최적 환수 수: ${bestResult.spirits.length}개`);
-        // console.log(
-        //   `- 선택된 환수: ${bestResult.spirits.map((s) => s.name).join(", ")}`
-        // );
-
         addNewOptimalCombination(bestResult);
         saveSavedOptimalCombinations();
 
@@ -2613,12 +2515,10 @@ const BondCalculatorApp = (function () {
         renderHistoryTabs(category);
         showSingleOptimalResult(bestResult);
       } else {
-        // console.log("최적 조합을 찾을 수 없음");
         document.getElementById("optimalSpiritsList").innerHTML =
           "<div class='warning-message'>최적 조합을 찾을 수 없습니다.</div>";
       }
 
-      // console.log("=== 스마트 필터링 종료 (워커 미지원) ===");
       isProcessing = false;
     }, 100);
   }
@@ -3463,10 +3363,7 @@ const BondCalculatorApp = (function () {
 
   function countSpiritsWithBindStats(result) {
     if (!result || !result.spirits) return 0;
-
-    return result.spirits.filter((spirit) => {
-      return hasAnyBindStats(spirit);
-    }).length;
+    return result.spirits.filter((spirit) => hasAnyBindStats(spirit)).length;
   }
 
   function renderHistoryTabs(category) {
@@ -4151,9 +4048,7 @@ const BondCalculatorApp = (function () {
           document
             .querySelectorAll(".info-icon")
             .forEach((i) => i.classList.remove("show-tooltip"));
-
           this.classList.toggle("show-tooltip");
-
           setTimeout(() => {
             this.classList.remove("show-tooltip");
           }, 3000);
@@ -4678,7 +4573,6 @@ const BondCalculatorApp = (function () {
     const toggleIcon = document.querySelector("#panelToggleBtn .toggle-icon");
 
     if (!mobilePanel) {
-      console.warn("Mobile panel not found");
       return;
     }
 
@@ -4700,11 +4594,6 @@ const BondCalculatorApp = (function () {
         toggleIcon.style.transform = "rotate(360deg)";
       }
     }
-
-    console.log(
-      "Mobile panel toggled, state:",
-      !mobilePanel.classList.contains("collapsed")
-    );
   }
 
   function syncSearchInputs() {

@@ -25,7 +25,6 @@
     background-color: #d32f2f;
 }
 
-
 .image-container-grid img.selected,
 .influence-group img.selected {
     border: 3px solid #1976d2;
@@ -69,7 +68,6 @@
     display: flex;
     align-items: center;
 }
-
 
 .selected-spirits-header h3 {
     margin-top: 0;
@@ -1349,6 +1347,37 @@
     right: -5px;
 }
 
+.data-warning-box {
+    margin: 10px 0 20px;
+    padding: 15px;
+    background-color: #fff3cd;
+    border-left: 5px solid #ffc107;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+
+.data-warning-box h4 {
+    margin-top: 0;
+    color: #856404;
+}
+
+.data-warning-box p {
+    margin: 5px 0;
+}
+
+.data-submission-request {
+    margin: 15px 0;
+    padding: 12px 15px;
+    background-color: #e8f4f8;
+    border: 2px solid #3498db;
+    border-radius: 5px;
+    font-style: italic;
+    font-size: 12px;
+    color: #333;
+    text-align: center;
+    font-weight: bold;
+}
+
 @keyframes pulse {
     0% {
         box-shadow: 0 0 0 0 rgba(25, 118, 210, 0.7);
@@ -1405,8 +1434,6 @@
     .results-container {
         grid-template-columns: repeat(3, 1fr);
     }
-
-
 }
 
 @media (max-width: 768px) {
@@ -1566,7 +1593,6 @@
         margin-top: 10px;
     }
 
-
     .history-tab {
         padding: 4px 8px;
         font-size: 11px;
@@ -1603,6 +1629,18 @@
     }
 
     .desktop-search-container {
+        display: none;
+    }
+
+    .mobile-clear-button-container {
+        display: flex;
+    }
+
+    .spirit-selection {
+        border-radius: 0 0 12px 12px;
+    }
+
+    #panelToggleContainer .clear-selection-btn {
         display: none;
     }
 }
@@ -1674,148 +1712,4 @@
     .search-controls {
         flex-direction: column;
     }
-}
-
-@media screen and (max-width: 768px) {
-
-    .modal-header {
-        flex-direction: column;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .modal-img-preview {
-        width: 60px;
-        height: 60px;
-    }
-
-    .title-area {
-        width: 100%;
-        align-items: center;
-    }
-
-    .modal h3 {
-        font-size: 16px;
-        justify-content: center;
-    }
-
-    .modal h3 .influence-icon {
-        width: 20px;
-        height: 20px;
-    }
-
-    .stats-container {
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .report-container {
-        display: block;
-        text-align: center;
-        margin: 20px 0;
-        padding: 0 15px;
-    }
-
-    .report-btn {
-        padding: 10px 20px;
-        font-size: 15px;
-        min-width: 160px;
-    }
-
-    .report-icon {
-        font-size: 16px;
-    }
-
-}
-
-@media screen and (max-width: 480px) {
-
-
-    .modal h3 {
-        font-size: 15px;
-    }
-
-    .modal h3 .influence-icon {
-        width: 18px;
-        height: 18px;
-    }
-
-    .level-controls button {
-        width: 28px;
-        height: 28px;
-        font-size: 16px;
-    }
-
-    .level-input {
-        font-size: 14px;
-        width: 35px;
-    }
-
-    .max-button {
-        font-size: 12px !important;
-        padding: 0 8px !important;
-    }
-
-    #registrationList li,
-    #bindList li {
-        font-size: 11px;
-        padding: 6px 8px;
-    }
-
-}
-
-@media (prefers-color-scheme: dark) {
-    .report-btn {
-        background: linear-gradient(135deg, #5d7ff7, #3a5ce6);
-        box-shadow: 0 4px 10px rgba(74, 108, 247, 0.4);
-    }
-
-    .report-btn:hover {
-        background: linear-gradient(135deg, #4a6cf7, #2a4cd6);
-    }
-}
-
-@media (max-width: 768px) {
-    .mobile-clear-button-container {
-        display: flex;
-    }
-
-    .spirit-selection {
-        border-radius: 0 0 12px 12px;
-    }
-
-    #panelToggleContainer .clear-selection-btn {
-        display: none;
-    }
-}
-
-.data-warning-box {
-    margin: 10px 0 20px;
-    padding: 15px;
-    background-color: #fff3cd;
-    border-left: 5px solid #ffc107;
-    border-radius: 4px;
-    font-size: 0.9em;
-}
-
-.data-warning-box h4 {
-    margin-top: 0;
-    color: #856404;
-}
-
-.data-warning-box p {
-    margin: 5px 0;
-}
-
-.data-submission-request {
-    margin: 15px 0;
-    padding: 12px 15px;
-    background-color: #e8f4f8;
-    border: 2px solid #3498db;
-    border-radius: 5px;
-    font-style: italic;
-    font-size: 12px;
-    color: #333;
-    text-align: center;
-    font-weight: bold;
 }
