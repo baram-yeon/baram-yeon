@@ -316,17 +316,18 @@ const BondCalculatorApp = (function () {
 
   function updateMobilePanel() {
     const toggleContainer = document.getElementById("panelToggleContainer");
-    if (!toggleContainer) return;
+    if (!toggleContainer) {
+      console.warn("Panel toggle container not found");
+      return;
+    }
 
     const currentCategory = lastActiveCategory;
     const categorySpirits = selectedSpirits.filter(
       (spirit) => spirit.category === currentCategory
     );
 
-    if (window.innerWidth <= 768) {
-      if (categorySpirits.length === 0) {
-        toggleContainer.style.display = "none";
-      } else {
+    if (screen.width <= 768 || window.innerWidth <= 768) {
+      if (categorySpirits.length > 0) {
         toggleContainer.style.display = "flex";
 
         const mobileCountElement = document.getElementById(
@@ -335,10 +336,16 @@ const BondCalculatorApp = (function () {
         if (mobileCountElement) {
           mobileCountElement.textContent = categorySpirits.length;
         }
+      } else {
+        toggleContainer.style.display = "none";
       }
     } else {
       toggleContainer.style.display = "none";
     }
+
+    // console.log(
+    //   `Mobile panel update: width=${window.innerWidth}, screen=${screen.width}, spirits=${categorySpirits.length}`
+    // );
   }
 
   function updateSelectedCount(forceCategory = null) {
@@ -838,6 +845,8 @@ const BondCalculatorApp = (function () {
 
   function saveSelectedSpiritsToStorage() {
     localStorage.setItem("selectedSpirits", JSON.stringify(selectedSpirits));
+
+    updateMobilePanel();
   }
 
   function saveSavedOptimalCombinations() {
@@ -2129,29 +2138,108 @@ const BondCalculatorApp = (function () {
     );
 
     const infoHTML = `
-      <div class="smart-filtering-info">
-          <h4>스마트 필터링 준비 완료 (20개 초과 선택 시 작동)</h4>
-          <p><strong>선택된 환수:</strong> ${rankedSpirits.length}개</p>
-          <div class="spirit-category-counts">
-              <div class="spirit-count">대피/대방% 환수: ${pvpSpirits.length}개</div>
-              <div class="spirit-count">피저/피저관 환수: ${resistanceSpirits.length}개</div>
-              <div class="spirit-count">기타 환수: ${otherSpirits.length}개</div>
-          </div>
-          <p class="filtering-info">환수들을 기여도에 따라 분석하여 모든 환수를 고려한 최적화된 계산을 수행합니다.</p>
-          <div class="filtering-phases">
-              <div class="phase active" id="phase0">준비 완료</div>
-              <div class="phase" id="phase1">1단계: 상위 점수 환수 분석</div>
-              <div class="phase" id="phase2">2단계: 균형 환수 분석</div>
-              <div class="phase" id="phase3">3단계: 전체 환수 분석</div>
-          </div>
-          <div class="progress-bar-container">
-              <div class="progress-bar" id="calculation-progress-bar" style="width:0%"></div>
-          </div>
-          <div id="calculation-status">계산 시작 준비 완료</div>
-      </div>
-    `;
+    <div class="smart-filtering-info">
+        <h4>스마트 필터링 준비 완료 (20개 초과 선택 시 작동)</h4>
+        <p><strong>선택된 환수:</strong> ${rankedSpirits.length}개</p>
+        <div class="spirit-category-counts">
+            <div class="spirit-count">대피/대방% 환수: ${pvpSpirits.length}개</div>
+            <div class="spirit-count">피저/피저관 환수: ${resistanceSpirits.length}개</div>
+            <div class="spirit-count">기타 환수: ${otherSpirits.length}개</div>
+        </div>
+        <p class="filtering-info">환수들을 기여도에 따라 분석하여 모든 환수를 고려한 최적화된 계산을 수행합니다.</p>
+        <div class="filtering-phases">
+            <div class="phase active" id="phase0">준비 완료</div>
+            <div class="phase" id="phase1">1단계: 상위 점수 환수 분석</div>
+            <div class="phase" id="phase2">2단계: 균형 환수 분석</div>
+            <div class="phase" id="phase3">3단계: 전체 환수 분석</div>
+        </div>
+        <div class="progress-container">
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="calculation-progress-bar" style="width:0%"></div>
+                <div class="progress-character" id="progress-character"></div>
+            </div>
+        </div>
+        <div id="calculation-status">계산 시작 준비 완료</div>
+    </div>
+  `;
 
     document.getElementById("optimalSpiritsList").innerHTML = infoHTML;
+
+    const animStyle = document.getElementById("progress-animation-style");
+    if (!animStyle) {
+      const style = document.createElement("style");
+      style.id = "progress-animation-style";
+      style.textContent = `
+      .progress-container {
+        position: relative;
+        margin: 15px 0;
+      }
+      
+      .progress-bar-container {
+        position: relative;
+        height: 30px;
+        background-color: #f0f0f0;
+        border-radius: 10px;
+        overflow: hidden;
+      }
+      
+      .progress-bar {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        background: linear-gradient(90deg, rgba(16, 59, 69, 1), rgba(16, 59, 69, 1)); 
+        border-radius: 10px;
+        transition: width 0.3s;
+        z-index: 1;
+      }
+      
+      .progress-character {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 30px;
+        height: 30px;
+        background-image: url('assets/img/walking.gif');
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        z-index: 2;
+        transition: left 0.3s;
+      }
+      
+      @media (max-width: 480px) {
+        .progress-character {
+          width: 20px;
+          height: 20px;
+        }
+        .progress-bar-container {
+          height: 20px;
+        }
+      }
+    `;
+      document.head.appendChild(style);
+    }
+  }
+
+  function updateProgressWithCharacter(progress) {
+    const progressBar = document.getElementById("calculation-progress-bar");
+    const progressCharacter = document.getElementById("progress-character");
+
+    if (progressBar && progressCharacter) {
+      const percentage = Math.round(progress * 100);
+      progressBar.style.width = `${percentage}%`;
+
+      const containerWidth = progressBar.parentElement.offsetWidth;
+      const characterWidth = progressCharacter.offsetWidth;
+
+      const maxLeft = containerWidth - characterWidth;
+      const left = Math.max(
+        0,
+        (containerWidth - characterWidth) * (percentage / 100)
+      );
+      progressCharacter.style.left = `${Math.min(left, maxLeft)}px`;
+    }
   }
 
   function updateCalculationPhase(phaseIndex) {
@@ -2315,7 +2403,6 @@ const BondCalculatorApp = (function () {
         e.data;
 
       if (type === "log") {
-        // console.log(`[Worker] ${message}`);
         return;
       }
 
@@ -2329,18 +2416,14 @@ const BondCalculatorApp = (function () {
       }
 
       if (type === "progress") {
-        const progressBar = document.getElementById("calculation-progress-bar");
         const statusText = document.getElementById("calculation-status");
         const currentPhaseName = phases[currentPhase - 1].name;
 
-        if (progressBar && statusText) {
+        if (statusText) {
           const percentage = Math.round(progress * 100);
-          progressBar.style.width = `${percentage}%`;
+          // 캐릭터 움직임 업데이트 함수 호출
+          updateProgressWithCharacter(progress);
           statusText.textContent = `${currentPhaseName} 분석 중 (${percentage}%)`;
-
-          if (percentage % 20 === 0) {
-            // console.log(`${currentPhaseName} 분석: ${percentage}% 완료`);
-          }
         }
 
         processedResultCount += processedCount || 0;
@@ -4483,17 +4566,26 @@ const BondCalculatorApp = (function () {
       localStorage.setItem("lastActiveCategory", lastActiveCategory);
     }
 
+    const isMobile = screen.width <= 768 || window.innerWidth <= 768;
+
     if (toggleContainer) {
-      if (window.innerWidth <= 768) {
+      if (isMobile) {
         const currentCategory = lastActiveCategory;
         const categorySpirits = selectedSpirits.filter(
           (spirit) => spirit.category === currentCategory
         );
 
-        if (categorySpirits.length === 0) {
-          toggleContainer.style.display = "none";
-        } else {
+        if (categorySpirits.length > 0) {
           toggleContainer.style.display = "flex";
+
+          const mobileCountElement = document.getElementById(
+            "mobileSelectedCount"
+          );
+          if (mobileCountElement) {
+            mobileCountElement.textContent = categorySpirits.length;
+          }
+        } else {
+          toggleContainer.style.display = "none";
         }
       } else {
         toggleContainer.style.display = "none";
@@ -4501,7 +4593,7 @@ const BondCalculatorApp = (function () {
     }
 
     if (mainRightPanel) {
-      if (window.innerWidth <= 768) {
+      if (isMobile) {
         mainRightPanel.style.display = "none";
       } else {
         mainRightPanel.style.display = "block";
@@ -4585,7 +4677,10 @@ const BondCalculatorApp = (function () {
     );
     const toggleIcon = document.querySelector("#panelToggleBtn .toggle-icon");
 
-    if (!mobilePanel) return;
+    if (!mobilePanel) {
+      console.warn("Mobile panel not found");
+      return;
+    }
 
     if (mobilePanel.classList.contains("collapsed")) {
       mobilePanel.classList.remove("collapsed");
@@ -4605,6 +4700,11 @@ const BondCalculatorApp = (function () {
         toggleIcon.style.transform = "rotate(360deg)";
       }
     }
+
+    console.log(
+      "Mobile panel toggled, state:",
+      !mobilePanel.classList.contains("collapsed")
+    );
   }
 
   function syncSearchInputs() {
@@ -4816,6 +4916,20 @@ const BondCalculatorApp = (function () {
           toggleStatOptions(false);
         }
       }
+    });
+
+    window.addEventListener("DOMContentLoaded", function () {
+      handleResponsiveLayout();
+      updateMobilePanel();
+
+      setTimeout(() => {
+        updateMobilePanel();
+      }, 500);
+    });
+
+    window.addEventListener("resize", function () {
+      handleResponsiveLayout();
+      updateMobilePanel();
     });
 
     window.addEventListener("resize", handleResponsiveLayout);
