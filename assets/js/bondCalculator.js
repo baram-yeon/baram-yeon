@@ -1514,7 +1514,7 @@ const BondCalculatorApp = (function () {
         <div class="optimal-score">
           <h4>환산합산: <span id="optimalScore">계산 중...</span> <span id="optimalScoreBind" class="bind-score">(장착효과: 계산 중...)</span></h4>
           <small>(피해저항관통 + 피해저항 + 대인피해% *10 + 대인방어% *10)</small><br />
-          <small>환산 합산은 등급 결속 효과 + 세력 결속 효과 + 각 환수 능력치이며 장착효과는 별도 표시됩니다.</small>
+          <small>환산 합산은 등급 결속 효과 + 세력 결속 효과 + 장착 효과 능력치입니다.</small>
         </div>
       </div>
 
@@ -1543,9 +1543,7 @@ const BondCalculatorApp = (function () {
         <div class="results-section">
           <div id="optimalBindEffects" class="effects-list"></div>
         </div>
-        <div class="results-section">
-          <div id="optimalTotalEffects" class="effects-list"></div>
-        </div>
+
       </div>
 
       <div id="optimalSpiritsDetails" class="spirit-details-container">
@@ -3403,12 +3401,15 @@ const BondCalculatorApp = (function () {
     }
 
     let highestScoreIndex = 0;
-    let highestScore =
-      categoryCombinations[0].scoreWithBind || categoryCombinations[0].score;
+    let highestScore = 0;
 
-    for (let i = 1; i < categoryCombinations.length; i++) {
+    for (let i = 0; i < categoryCombinations.length; i++) {
+      const combo = categoryCombinations[i];
       const currentScore =
-        categoryCombinations[i].scoreWithBind || categoryCombinations[i].score;
+        ensureNumber(combo.gradeScore) +
+        ensureNumber(combo.factionScore) +
+        ensureNumber(combo.bindScore);
+
       if (currentScore > highestScore) {
         highestScore = currentScore;
         highestScoreIndex = i;
@@ -3446,7 +3447,9 @@ const BondCalculatorApp = (function () {
               }
 
               const totalScore = Math.round(
-                ensureNumber(combo.scoreWithBind || 0)
+                ensureNumber(combo.gradeScore || 0) +
+                  ensureNumber(combo.factionScore || 0) +
+                  ensureNumber(combo.bindScore || 0)
               );
 
               return `
@@ -3513,7 +3516,7 @@ const BondCalculatorApp = (function () {
         overflow-x: hidden;
         padding-bottom: 5px;
       }
-
+  
       .history-tabs {
         display: grid;
         grid-template-columns: repeat(5, 1fr);
@@ -3521,7 +3524,7 @@ const BondCalculatorApp = (function () {
         margin-bottom: 12px;
         gap: 4px;
       }
-
+  
       .history-tab, .history-tab-placeholder {
         border-radius: 6px;
         padding: 20px 2px 5px;
@@ -3529,7 +3532,7 @@ const BondCalculatorApp = (function () {
         position: relative;
         min-height: 65px;
       }
-
+  
       .history-tab {
         border: 1px solid #ddd;
         background-color: #f8f8f8;
@@ -3537,24 +3540,24 @@ const BondCalculatorApp = (function () {
         transition: all 0.2s;
         overflow: hidden;
       }
-
+  
       .history-tab-placeholder {
         background-color: transparent;
         border: 1px dashed #eee;
       }
-
+  
       .tab-content {
         display: flex;
         flex-direction: column;
         align-items: center;
       }
-
+  
       .combo-name {
         font-weight: bold;
         font-size: 12px;
         white-space: nowrap;
       }
-
+  
       .tab-indicators {
         position: absolute;
         top: 2px;
@@ -3564,55 +3567,55 @@ const BondCalculatorApp = (function () {
         justify-content: center;
         gap: 2px;
       }
-
+  
       .current-marker, .best-marker {
         font-size: 9px;
         padding: 1px 4px;
         border-radius: 2px;
         font-weight: normal;
       }
-
+  
       .current-marker {
         background: #3498db;
         color: white;
       }
-
+  
       .best-marker {
         background: #e74c3c;
         color: white;
       }
-
+  
       .tab-score {
         font-size: 11px;
         font-weight: bold;
         margin-top: 3px;
       }
-
+  
       .best-notice {
         margin-left: 10px;
         color: #e74c3c;
         font-weight: bold;
       }
-
+  
       .history-tab.active {
         border: 2px solid #3498db;
         background-color: #ebf5fb;
       }
-
+  
       .history-tab.best {
         border: 2px solid #e74c3c;
         background-color: #fdedec;
       }
-
+  
       .history-tab.active.best {
         background: linear-gradient(135deg, #ebf5fb 0%, #fdedec 100%);
       }
-
+  
       .has-bind-bonus {
         color: #2ecc71 !important;
         font-weight: bold;
       }
-
+  
       .no-bind-warning {
         margin: 10px 0;
         padding: 10px 15px;
@@ -3621,7 +3624,7 @@ const BondCalculatorApp = (function () {
         font-size: 0.9em;
         color: #555;
       }
-
+  
       .history-tab .tab-score {
         font-size: 11px;
         font-weight: bold;
@@ -3629,33 +3632,33 @@ const BondCalculatorApp = (function () {
         display: block;
         text-align: center;
       }
-
+  
       @media (max-width: 480px) {
         .history-tab, .history-tab-placeholder {
           padding: 18px 2px 5px;
           min-height: 58px;
         }
-
+  
         .combo-name {
           font-size: 10px;
         }
-
+  
         .current-marker, .best-marker {
           font-size: 8px;
           padding: 0px 2px;
         }
-
+  
         .tab-score {
           font-size: 10px;
         }
-
+  
         .best-notice {
           display: block;
           margin-top: 5px;
           margin-left: 0;
           font-size: 11px;
         }
-
+  
         .timestamp {
           font-size: 11px;
         }
@@ -3693,12 +3696,6 @@ const BondCalculatorApp = (function () {
   }
 
   function showSingleOptimalResult(result) {
-    // console.log("결과 객체:", result);
-    // console.log("누락된 데이터:", {
-    //   missingData: result.missingDataSpirits,
-    //   missingBindData: result.missingBindDataSpirits,
-    // });
-
     if (
       !result ||
       !result.spirits ||
@@ -3712,33 +3709,31 @@ const BondCalculatorApp = (function () {
 
     const {
       spirits,
-      regScore,
       gradeScore,
       factionScore,
-      score,
-      scoreWithBind,
       bindScore,
       gradeCounts,
       factionCounts,
       gradeEffects,
       factionEffects,
       bindStats,
-      registrationOnly,
-      combinedEffects,
-      combinedEffectsWithBind,
       missingDataSpirits,
       missingBindDataSpirits,
     } = result;
 
-    const displayScoreWithBind = Math.round(ensureNumber(scoreWithBind));
-    const displayRegScore = Math.round(ensureNumber(regScore));
+    const combinedScoreWithoutReg = Math.round(
+      ensureNumber(gradeScore) +
+        ensureNumber(factionScore) +
+        ensureNumber(bindScore)
+    );
+
     const displayGradeScore = Math.round(ensureNumber(gradeScore));
     const displayFactionScore = Math.round(ensureNumber(factionScore));
     const displayBindScore = Math.round(ensureNumber(bindScore));
 
     document.getElementById(
       "optimalScore"
-    ).textContent = `${displayScoreWithBind} (등록효과: ${displayRegScore} 등급: ${displayGradeScore} 세력: ${displayFactionScore} 장착효과: ${displayBindScore})`;
+    ).textContent = `${combinedScoreWithoutReg} (등급: ${displayGradeScore} 세력: ${displayFactionScore} 장착효과: ${displayBindScore})`;
     document.getElementById("optimalScoreBind").style.display = "none";
 
     const resultsContainer = document.getElementById(
@@ -3916,159 +3911,151 @@ const BondCalculatorApp = (function () {
     }
 
     if (totalEffectsContainer) {
-      totalEffectsContainer.innerHTML = `
-        <h4>등록 효과 <span class="section-score">(${displayRegScore})</span></h4>
-        <div class="effects-content">
-          ${
-            Object.keys(registrationOnly || {}).length > 0
-              ? renderEffectsList(registrationOnly || {}, "", true)
-              : "<p>적용된 효과가 없습니다.</p>"
-          }
-        </div>
-      `;
+      totalEffectsContainer.innerHTML = "";
+      totalEffectsContainer.style.display = "none";
     }
 
     const style = document.createElement("style");
     style.textContent = `
-  .section-title {
-    font-weight: bold;
-    margin-bottom: 10px;
-    color: #333;
-    border-bottom: 1px solid #ddd;
-    padding-bottom: 5px;
-  }
-  .section-score {
-    color: #e67e22;
-    font-weight: bold;
-  }
-  .info-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background-color: #3498db;
-    color: white;
-    font-size: 11px;
-    cursor: pointer;
-    margin-left: 5px;
-    font-weight: bold;
-    vertical-align: middle;
-    position: relative;
-  }
-  
-  .info-icon:hover::after,
-  .info-icon.show-tooltip::after {
-    content: attr(title);
-    position: absolute;
-    bottom: 125%;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 5px 10px;
-    background-color: #2c3e50;
-    color: white;
-    border-radius: 4px;
-    font-size: 12px;
-    white-space: nowrap;
-    z-index: 100;
-    pointer-events: none;
-  }
-  
-  #combinationResultsContainer {
-    display: block;
-  }
-  
-  .spirits-grid-container {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-gap: 6px;
-    margin-top: 12px;
-  }
-  
-  .spirit-info-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 5px;
-    border-radius: 5px;
-    background-color: #f9f9f9;
-    border: 1px solid #eee;
-    height: 100%;
-  }
-  
-  .spirit-info-item img {
-    width: 45px;
-    height: 45px;
-    object-fit: contain;
-    margin-bottom: 3px;
-  }
-  
-  .spirit-info-details {
-    width: 100%;
-    text-align: center;
-  }
-  
-  .spirit-info-name {
-    font-weight: bold;
-    font-size: 11px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  
-  .spirit-info-level {
-    font-size: 9px;
-    color: #666;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  
-  @media (max-width: 768px) {
-    .results-container {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      grid-gap: 10px;
+    .section-title {
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #333;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 5px;
+    }
+    .section-score {
+      color: #e67e22;
+      font-weight: bold;
+    }
+    .info-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background-color: #3498db;
+      color: white;
+      font-size: 11px;
+      cursor: pointer;
+      margin-left: 5px;
+      font-weight: bold;
+      vertical-align: middle;
+      position: relative;
     }
     
-    .results-section {
-      margin-bottom: 5px;
-    }
-    
-    .results-section h4 {
-      font-size: 14px;
-      margin: 0 0 5px 0;
-    }
-    
-    .effects-list {
+    .info-icon:hover::after,
+    .info-icon.show-tooltip::after {
+      content: attr(title);
+      position: absolute;
+      bottom: 125%;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 5px 10px;
+      background-color: #2c3e50;
+      color: white;
+      border-radius: 4px;
       font-size: 12px;
+      white-space: nowrap;
+      z-index: 100;
+      pointer-events: none;
     }
     
-    .effect-item {
-      padding: 3px 5px;
+    #combinationResultsContainer {
+      display: block;
     }
     
-    @media (max-width: 400px) {
-      .spirits-grid-container {
-        grid-gap: 4px;
+    .spirits-grid-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-gap: 6px;
+      margin-top: 12px;
+    }
+    
+    .spirit-info-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 5px;
+      border-radius: 5px;
+      background-color: #f9f9f9;
+      border: 1px solid #eee;
+      height: 100%;
+    }
+    
+    .spirit-info-item img {
+      width: 45px;
+      height: 45px;
+      object-fit: contain;
+      margin-bottom: 3px;
+    }
+    
+    .spirit-info-details {
+      width: 100%;
+      text-align: center;
+    }
+    
+    .spirit-info-name {
+      font-weight: bold;
+      font-size: 11px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .spirit-info-level {
+      font-size: 9px;
+      color: #666;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    @media (max-width: 768px) {
+      .results-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-gap: 10px;
       }
       
-      .spirit-info-item img {
-        width: 40px;
-        height: 40px;
+      .results-section {
+        margin-bottom: 5px;
       }
       
-      .spirit-info-name {
-        font-size: 10px;
+      .results-section h4 {
+        font-size: 14px;
+        margin: 0 0 5px 0;
       }
       
-      .spirit-info-level {
-        font-size: 8px;
+      .effects-list {
+        font-size: 12px;
+      }
+      
+      .effect-item {
+        padding: 3px 5px;
+      }
+      
+      @media (max-width: 400px) {
+        .spirits-grid-container {
+          grid-gap: 4px;
+        }
+        
+        .spirit-info-item img {
+          width: 40px;
+          height: 40px;
+        }
+        
+        .spirit-info-name {
+          font-size: 10px;
+        }
+        
+        .spirit-info-level {
+          font-size: 8px;
+        }
       }
     }
-  }
-`;
+  `;
 
     document.head.appendChild(style);
 
