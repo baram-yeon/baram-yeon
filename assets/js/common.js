@@ -37,7 +37,7 @@ CommonData.STATS_MAPPING = {
   magicPotionEnhancement: "마력시약향상",
   damageIncrease: "피해증가",
   healthRecoveryImprovement: "체력회복향상",
-  magicRecoveryImprovement: "마나회복향상",
+  magicRecoveryImprovement: "마력회복향상",
   criticalChance: "치명확률",
   criticalPower: "치명위력",
 };
