@@ -186,9 +186,9 @@ window.UIRenderer =
         const imgWidth = img.offsetWidth;
         const indicatorSize = Math.max(
           10,
-          Math.min(Math.round(imgWidth * 0.08), 20)
+          Math.min(Math.round(imgWidth * 0.22), 26)
         );
-        const fontSize = Math.max(6, Math.round(indicatorSize * 0.6));
+        const fontSize = Math.max(6, Math.round(indicatorSize * 0.65));
 
         indicator.style.width = indicatorSize + "px";
         indicator.style.height = indicatorSize + "px";
